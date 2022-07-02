@@ -1,6 +1,3 @@
-from dataclasses import fields
-from importlib.metadata import files
-from django.test import modify_settings
 from rest_framework import serializers
 from .models import User,Profile,Comment,Module,Session,Announcement
 
