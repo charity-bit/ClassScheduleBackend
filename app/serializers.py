@@ -1,6 +1,4 @@
 from dataclasses import fields
-from importlib.metadata import files
-from django.test import modify_settings
 from rest_framework import serializers
 from .models import User,Profile,Comment,Module,Session,Announcement
 
@@ -21,9 +19,14 @@ class ProfileSerializer(serializers.ModelSerializer):
     modules = ModuleSerializer(read_only =True )
     class Meta:
         model = Profile
-        fields = '__all'
+        fields = '__all__'
 
-
+class SessionSerializers(serializers.ModelSerializer):
+    user = UserSerializer(read_only = True) 
+    module = ModuleSerializer(read_only =True )
+    class Meta:
+        model=Session
+        fields='__all__'
 
 
 
