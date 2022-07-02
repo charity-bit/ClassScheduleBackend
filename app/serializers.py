@@ -1,3 +1,4 @@
+from requests import session
 from rest_framework import serializers
 from .models import User, Profile, Comment, Module, Session, Announcement
 
@@ -24,6 +25,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
+
+
 class SessionSerializers(serializers.ModelSerializer):
     user = UserSerializer(read_only = True) 
     module = ModuleSerializer(read_only =True )
@@ -31,8 +34,20 @@ class SessionSerializers(serializers.ModelSerializer):
         model=Session
         fields='__all__'
 
+
+
 class AnnouncementSerializers(serializers.ModelSerializer):
     user = UserSerializer(read_only = True) 
     class Meta:
         model=Announcement
         fields='__all__'
+
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only = True) 
+    session = ModuleSerializer(read_only =True )
+    class Meta:
+        model=Comment
+        fields=('id','likes','date_created','comment')
+        
