@@ -1,5 +1,3 @@
-from pickle import TRUE
-from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
@@ -18,12 +16,15 @@ class User(AbstractUser):
     )
 
     name = models.CharField(max_length=255)
+    username = models.CharField(max_length=255,null=True,blank=True)
     email = models.EmailField(max_length=255,unique=True)
     user_type = models.CharField(max_length=4,choices=USER_TYPES,default=STUDENT)
 
     # request.user.user_type == 'TM'
     
     username = None
+    first_name = None
+    last_name = None
 
 
     USERNAME_FIELD = 'email'
@@ -48,7 +49,7 @@ class Module(models.Model):
     technical_mentor = models.ForeignKey(User,related_name='module_tm',on_delete = models.DO_NOTHING,null=True)
     name = models.CharField(max_length=255)
     date_created = models.DateTimeField(default=timezone.now)
-
+    
 
     def __str__(self):
         return f'{self.name}'
@@ -81,7 +82,7 @@ class Module(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     profile_image = CloudinaryField('image')
-    modules = models.ManyToManyField(Module,null=True,blank=True)
+    modules = models.ManyToManyField(Module,blank=True)
     bio = models.TextField()
 
 
@@ -109,7 +110,7 @@ class Session(models.Model):
     technical_mentor = models.ForeignKey(User,related_name='session_tm',on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     meet_url = models.URLField(max_length=255)
-    date_of_session = models.DateTimeField(default=timezone.now)
+    date_of_session = models.DateTimeField()
     module = models.ForeignKey(Module,related_name='module_session',on_delete=models.CASCADE)
     start = models.TimeField()
     end = models.TimeField()
