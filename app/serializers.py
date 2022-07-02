@@ -18,7 +18,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     modules = ModuleSerializer(read_only =True )
     class Meta:
         model = Profile
-        fields = '__all'
+        fields = '__all__'
 
 
 
