@@ -31,3 +31,8 @@ class SessionSerializers(serializers.ModelSerializer):
         model=Session
         fields='__all__'
 
+class AnnouncementSerializers(serializers.ModelSerializer):
+    user = UserSerializer(read_only = True) 
+    class Meta:
+        model=Announcement
+        fields='__all__'
