@@ -26,7 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 
-class SessionSerializers(serializers.ModelSerializer):
+class SessionSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only = True) 
     module = ModuleSerializer(read_only =True )
     class Meta:
@@ -35,7 +35,7 @@ class SessionSerializers(serializers.ModelSerializer):
 
 
 
-class AnnouncementSerializers(serializers.ModelSerializer):
+class AnnouncementSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only = True) 
     class Meta:
         model=Announcement
@@ -49,3 +49,4 @@ class CommentSerializer(serializers.ModelSerializer):
         model=Comment
         fields=('id','likes','date_created','comment','session')
         
+    # create_comment=Comment.objects.create()
