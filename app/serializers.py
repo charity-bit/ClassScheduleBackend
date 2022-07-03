@@ -51,3 +51,13 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields=['user']
         
     # create_comment=Comment.objects.create()
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    # user = UserSerializer(read_only=True)
+    # modules = ModuleSerializer(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = '__all__'
+        read_only_fields=['user','modules']

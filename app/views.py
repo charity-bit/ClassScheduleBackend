@@ -1,7 +1,8 @@
 from django.http import HttpResponse, JsonResponse
+from requests import request
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .serializers import AnnouncementSerializer, UserSerializer,ModuleSerializer,ProfileSerializer,SessionSerializer,CommentSerializer
+from .serializers import AnnouncementSerializer, UserSerializer,ModuleSerializer,ProfileSerializer,UpdateProfileSerializer,SessionSerializer,CommentSerializer
 from rest_framework.response import Response
 from app.models import User,Module,Profile,Session,Announcement,Comment
 from rest_framework import status,generics
@@ -58,3 +59,8 @@ def get_available_session(request,session_id):
     available_session=Session.objects.filter(id=session_id).first()
     serializers=SessionSerializer(available_session,many=True)
     return Response(serializers.data)
+
+class studentprofileupdateAPIview(generics.RetrieveAPIView,
+                                   mixins.UpdateModelMixin):
+    serializer_class = UpdateProfileSerializer
+    parser_classes = (MultiPartParser, FormParser,)
