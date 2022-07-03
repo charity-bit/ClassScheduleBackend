@@ -33,6 +33,7 @@ def create_comment(request,format=None):
         serializers.save()
         return Response(serializers.data,status=status.HTTP_201_CREATED)
     return Response(serializers.errors,status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['GET'])
 def all_comments(request,format=None):

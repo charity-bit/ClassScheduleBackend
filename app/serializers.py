@@ -44,9 +44,10 @@ class AnnouncementSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only = True) 
+    # user = UserSerializer(read_only = True) 
     class Meta:
         model=Comment
         fields=('id','likes','date_created','comment','session')
+        read_only_fields=['user']
         
     # create_comment=Comment.objects.create()
