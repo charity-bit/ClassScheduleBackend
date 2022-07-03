@@ -25,5 +25,6 @@ urlpatterns = [
    path('api/allcomments/', views.all_comments,name=''),
    path('api/allannouncement/', views.all_announcements,name=''),
    path('api/sessiondetails/', views.get_session_details,name=''),
-   
+   path('api/searchsessions/', views.get_available_session,name=''),
+
 ]
