@@ -8,7 +8,7 @@ from app.models import User,Module,Profile,Session,Announcement,Comment
 from rest_framework import status,generics
 from django.http  import Http404
 # from django.contrib.auth import get_user_model
-# from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
@@ -64,3 +64,14 @@ class studentprofileupdateAPIview(generics.RetrieveAPIView,
                                    mixins.UpdateModelMixin):
     serializer_class = UpdateProfileSerializer
     parser_classes = (MultiPartParser, FormParser,)
+
+
+    def get_profile(self):
+        
+        username = self.kwargs["username"]
+        obj = get_object_or_404(User, username=username)
+        return obj
+
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
