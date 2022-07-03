@@ -23,4 +23,7 @@ urlpatterns = [
    path('api/',views.api,name='api'),
    path('api/apis/creatercomment/', views.create_comment,name=''),
    path('api/allcomments/', views.all_comments,name=''),
+   path('api/allannouncement/', views.all_announcements,name=''),
+   path('api/sessiondetails/', views.get_session_details,name=''),
+   
 ]

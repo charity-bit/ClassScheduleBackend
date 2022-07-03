@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .serializers import UserSerializer,ModuleSerializer,ProfileSerializer,SessionSerializer,CommentSerializer
+from .serializers import AnnouncementSerializer, UserSerializer,ModuleSerializer,ProfileSerializer,SessionSerializer,CommentSerializer
 from rest_framework.response import Response
 from app.models import User,Module,Profile,Session,Announcement,Comment
 from rest_framework import status,generics
@@ -39,4 +39,22 @@ def create_comment(request,format=None):
 def all_comments(request,format=None):
     comments=Comment.objects.all()
     serializers=CommentSerializer(comments,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def all_announcements(request,format=None):
+    announcements=Announcement.objects.all()
+    serializers=AnnouncementSerializer(announcements,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def get_session_details(request,format=None):
+    session_details=Session.objects.all()
+    serializers=SessionSerializer(session_details,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def get_available_session(request,session_id):
+    available_session=Session.objects.filter(id=session_id).first()
+    serializers=SessionSerializer(available_session,many=True)
     return Response(serializers.data)
