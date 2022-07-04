@@ -34,7 +34,8 @@ urlpatterns = [
    path('api/sessions/search/', views.get_available_session,name=''),
    
    # Create user api
-   path('api/user/create/',views.UserCreateAPIView.as_view()),
-   path('api/user/login/',views.LoginAPIView.as_view())
+   path('api/user/create/',views.UserCreateAPIView.as_view(),name=''),
+   path('api/user/login/',views.LoginAPIView.as_view(),name=''),
+   path('api/user/logout/',views.LogoutAPIView.as_view(),name='')
 
 ]

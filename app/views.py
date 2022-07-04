@@ -34,6 +34,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 # from .permissions import *
 from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
@@ -106,6 +107,16 @@ class UserCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+# logout user apiview
+
+class LogoutAPIView(APIView):
+    def get(self,request,format = None):
+        logout(request)
+        return Response(status = status.HTTP_200_OK)
+        
+
+
 # Adding comments
 @api_view(["POST"])
 def create_comment(request, format=None):
@@ -164,3 +175,5 @@ class studentprofileupdateAPIview(generics.RetrieveAPIView, mixins.UpdateModelMi
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+

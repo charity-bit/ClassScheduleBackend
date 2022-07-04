@@ -43,6 +43,9 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = "__all__"
 
+    # def create_announcement(self,data):
+
+
 
 class CommentSerializer(serializers.ModelSerializer):
     # user = UserSerializer(read_only = True)
