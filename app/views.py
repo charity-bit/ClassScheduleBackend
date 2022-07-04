@@ -8,12 +8,15 @@ from app.serializers import (
     UserCreateSerializer,
     UserSerializer,
     ModuleSerializer,
+    CreateModuleSerializer,
     ProfileSerializer,
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
 )
+from .permissions import ModulePermissions
+
 from rest_framework.response import Response
 from app.models import User, Module, Profile, Session, Announcement, Comment
 from rest_framework import status, generics
@@ -21,9 +24,11 @@ from django.http import Http404
 
 # from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
+from rest_framework import viewsets
 
 # from rest_framework.schemas import get_schema_view
 from rest_framework.views import APIView
@@ -176,4 +181,10 @@ class studentprofileupdateAPIview(generics.RetrieveAPIView, mixins.UpdateModelMi
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
+
+
+class ModuleViewSet(viewsets.ModelViewSet):
+    permission_classes = [ModulePermissions]
+    serializer_class = CreateModuleSerializer
+    queryset = Module.objects.all()
 

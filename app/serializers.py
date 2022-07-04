@@ -12,10 +12,25 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ModuleSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
+    class Meta:
+        model = Module
+        fields = "__all__"
+
+class CreateModuleSerializer(serializers.ModelSerializer):
+    technical_mentor = UserSerializer(read_only=True)
 
     class Meta:
         model = Module
         fields = "__all__"
+
+    def create(self,validated_data):
+       
+        module = Module.objects.create(**validated_data)
+            # module.save()
+
+        return module
+
+       
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -43,7 +58,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = "__all__"
 
-    # def create_announcement(self,data):
+   
 
 
 
