@@ -1,8 +1,14 @@
 from django.urls import path
+
 from app import views
+from app.views import ModuleViewSet
+
 from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
+
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -17,17 +23,34 @@ schema_view = get_schema_view(
    permission_classes=[permissions.AllowAny],
 )
 
+
+router = DefaultRouter()
+
+router.register(r'modules',ModuleViewSet)
+
+
 urlpatterns = [
    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
    path('api/',views.api,name='api'),
-   path('api/apis/creatercomment/', views.create_comment,name=''),
-   path('api/allcomments/', views.all_comments,name=''),
-   path('api/allannouncement/', views.all_announcements,name=''),
-   path('api/sessiondetails/', views.get_session_details,name=''),
-   path('api/searchsessions/', views.get_available_session,name=''),
+   
+   # comments
+   path('api/comments/create/', views.create_comment,name=''),
+   path('api/comments/', views.all_comments,name=''),
+
+   # announcements
+   path('api/announcements/', views.all_announcements,name=''),
+
+   # sessions
+   path('api/sessions/detail/', views.get_session_details,name=''),
+   path('api/sessions/search/', views.get_available_session,name=''),
    
    # Create user api
-   path('api/user/create/',views.UserCreateAPIView.as_view())
+   path('api/user/create/',views.UserCreateAPIView.as_view(),name=''),
+   path('api/user/login/',views.LoginAPIView.as_view(),name=''),
+   path('api/user/logout/',views.LogoutAPIView.as_view(),name='')
 
-]
+
+   
+
+] + router.urls
