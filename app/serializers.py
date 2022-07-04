@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Profile, Comment, Module, Session, Announcement
+from django.contrib.auth import authenticate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,10 +55,24 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
-    # modules = ModuleSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+    modules = ModuleSerializer(read_only=True)
 
     class Meta:
         model = Profile
         fields = '__all__'
-        read_only_fields=['user','modules']
+        # read_only_fields=['user','modules']
+
+
+class loginSerializer(serializers.Serializer):
+    username=serializers.CharField(write_only=True,required=True)
+    password=serializers.CharField(write_only=True,required=True)
+
+    def validate_user(self):
+        new_user=authenticate(
+            username=self.validated_data['username'],
+            password=self.validated_data['password']
+        )
+        if new_user is not None:
+            return new_user
+        raise serializers.ValidationError('The User does not Exist')
