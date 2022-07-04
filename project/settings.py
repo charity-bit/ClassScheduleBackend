@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'cloudinary',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'drf_yasg',
 ]
