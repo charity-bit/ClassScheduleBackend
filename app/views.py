@@ -70,6 +70,7 @@ class LoginAPIView(APIView):
             # get auth token
             token, created = Token.objects.get_or_create(user=user)
             data["token"] = token.key
+            # data["User"]=user
 
             responseStatus = status.HTTP_200_OK
 
@@ -121,7 +122,7 @@ class LogoutAPIView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-# # Adding comments
+# Adding comments
 # @api_view(["POST"])
 # def create_comment(request, format=None):
 #     serializers = CommentSerializer(data=request.data)
@@ -137,6 +138,7 @@ class LogoutAPIView(APIView):
 #     comments = Comment.objects.all()
 #     serializers = CommentSerializer(comments, many=True)
 #     return Response(serializers.data)
+
 
 # creating comments using viewset
 class CommentViewSet(viewsets.ModelViewSet):

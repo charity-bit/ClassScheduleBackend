@@ -5,10 +5,11 @@ import re
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile='ProfileSerializer'
+    # profile='ProfileSerializer(many=False,read_only=True)'
     class Meta:
         model = User
-        fields = "__all__"
+        fields='__all__'
+        # fields = ['pk','email','profile','name','user_type']
 
 
 class ModuleSerializer(serializers.ModelSerializer):
