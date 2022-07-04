@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.utils import timezone
 
+from .managers import CustomUserManager
+
 
 # Create your models here.
 class User(AbstractUser):
@@ -13,7 +15,6 @@ class User(AbstractUser):
     USER_TYPES = ((STUDENT, "Student"), (TECHNICAL_MENTOR, "Technical Mentor"))
 
     name = models.CharField(max_length=255)
-    username = models.CharField(max_length=255,unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True)
     user_type = models.CharField(max_length=4, choices=USER_TYPES, default=STUDENT)
 
@@ -23,6 +24,8 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
 
     def __str__(self):
         return f"{self.email}"

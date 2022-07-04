@@ -26,5 +26,8 @@ urlpatterns = [
    path('api/allannouncement/', views.all_announcements,name=''),
    path('api/sessiondetails/', views.get_session_details,name=''),
    path('api/searchsessions/', views.get_available_session,name=''),
+   
+   # Create user api
+   path('api/user/create/',views.UserCreateAPIView.as_view())
 
 ]
