@@ -13,7 +13,7 @@ class User(AbstractUser):
     USER_TYPES = ((STUDENT, "Student"), (TECHNICAL_MENTOR, "Technical Mentor"))
 
     name = models.CharField(max_length=255)
-    username = models.CharField(max_length=255, null=True, blank=True)
+    username = models.CharField(max_length=255,unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True)
     user_type = models.CharField(max_length=4, choices=USER_TYPES, default=STUDENT)
 
