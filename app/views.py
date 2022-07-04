@@ -12,6 +12,7 @@ from app.serializers import (
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
+    LoginSerializer,
 )
 from rest_framework.response import Response
 from app.models import User, Module, Profile, Session, Announcement, Comment
@@ -30,6 +31,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from drf_yasg.utils import swagger_auto_schema
+
 # from .permissions import *
 from rest_framework.authtoken.models import Token
 
@@ -40,49 +42,68 @@ def api(request):
     return HttpResponse("this is the backed for classroom schedule")
 
 
-# CREATE USER API
+# login user api
+class LoginAPIView(APIView):
+    '''
+
+    Login User APIView
+
+    '''
+
+    @swagger_auto_schema(request_body=LoginSerializer)
+    def post(self,request,format=None):
+        serializer = LoginSerializer(data = request.data)
+        if serializer.is_valid():
+            user = serializer.validate_user()
+            data = {
+                "message":'User logged in successfully',
+                "email":user.email,
+                "user_type":user.user_type
+            }
+
+            # get auth token
+            token,created = Token.objects.get_or_create(user=user)
+            data['token'] = token.key
+
+            responseStatus = status.HTTP_200_OK
+
+            return Response(data,status = responseStatus)
+
+        else:
+            Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
 
 
+# create user api
 class UserCreateAPIView(APIView):
     """
 
     Create User API
 
     """
+
     @swagger_auto_schema(request_body=UserCreateSerializer)
-    def post(self,request,format = None):
+    def post(self, request, format=None):
         data = request.data
-        email = data['email']
+        email = data["email"]
 
         regex = "@([a-z\S]+)"
         result = re.split(regex, email)
         if result[1] == "student.moringaschool.com":
-            user_type  = 'STUD'
+            user_type = "STUD"
         elif result[1] == "moringaschool.com":
-            user_type  = 'TM'
+            user_type = "TM"
 
         else:
-            return Response(status = status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        
-        serializer = UserCreateSerializer(data = request.data)
+        serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user_type = user_type)
-            data = {
-                'email':data['email'],
-                'message':'User created successfully'
-            }
+            serializer.save(user_type=user_type)
+            data = {"email": data["email"], "message": "User created successfully"}
 
-
-            return Response(data,status=status.HTTP_201_CREATED)
+            return Response(data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        
-    
-
-
-    
 
 
 # Adding comments

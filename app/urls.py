@@ -21,13 +21,20 @@ urlpatterns = [
    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
    path('api/',views.api,name='api'),
-   path('api/apis/creatercomment/', views.create_comment,name=''),
-   path('api/allcomments/', views.all_comments,name=''),
-   path('api/allannouncement/', views.all_announcements,name=''),
-   path('api/sessiondetails/', views.get_session_details,name=''),
-   path('api/searchsessions/', views.get_available_session,name=''),
+   
+   # comments
+   path('api/comments/create/', views.create_comment,name=''),
+   path('api/comments/', views.all_comments,name=''),
+
+   # announcements
+   path('api/announcements/', views.all_announcements,name=''),
+
+   # sessions
+   path('api/sessions/detail/', views.get_session_details,name=''),
+   path('api/sessions/search/', views.get_available_session,name=''),
    
    # Create user api
-   path('api/user/create/',views.UserCreateAPIView.as_view())
+   path('api/user/create/',views.UserCreateAPIView.as_view()),
+   path('api/user/login/',views.LoginAPIView.as_view())
 
 ]
