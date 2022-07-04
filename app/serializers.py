@@ -65,12 +65,12 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
 
 class loginSerializer(serializers.Serializer):
-    username=serializers.CharField(write_only=True,required=True)
+    email=serializers.CharField(write_only=True,required=True)
     password=serializers.CharField(write_only=True,required=True)
 
     def validate_user(self):
         new_user=authenticate(
-            username=self.validated_data['username'],
+            email=self.validated_data['email'],
             password=self.validated_data['password']
         )
         if new_user is not None:

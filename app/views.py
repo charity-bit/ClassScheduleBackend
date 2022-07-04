@@ -68,14 +68,14 @@ def get_available_session(request,session_id):
 class studentprofileupdateAPIview(generics.RetrieveAPIView,
                                    mixins.UpdateModelMixin):
     serializer_class = UpdateProfileSerializer
-    parser_classes = (MultiPartParser, FormParser,)
+    parser_class = (MultiPartParser, FormParser,)
 
 
     def get_profile(self):
         
-        username = self.kwargs["username"]
-        obj = get_object_or_404(User, username=username)
-        return obj
+        email = self.kwargs["email"]
+        new_obj = get_object_or_404(User, email=email)
+        return new_obj
 
 
     def put(self, request, *args, **kwargs):

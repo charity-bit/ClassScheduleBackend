@@ -17,11 +17,11 @@ class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     user_type = models.CharField(max_length=4, choices=USER_TYPES, default=STUDENT)
 
-    # username = None
+    username = None
     first_name = None
     last_name = None
 
-    # USERNAME_FIELD = "email"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     def __str__(self):
