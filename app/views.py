@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 import re
+from requests import request
 
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
@@ -8,15 +9,13 @@ from app.serializers import (
     UserCreateSerializer,
     UserSerializer,
     ModuleSerializer,
-    CreateModuleSerializer,
     ProfileSerializer,
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
-    
 )
-from .permissions import ModulePermissions
+from .permissions import TMPermissions
 
 from rest_framework.response import Response
 from app.models import User, Module, Profile, Session, Announcement, Comment
@@ -215,6 +214,20 @@ class StudentProfileUpdateAPIview(generics.GenericAPIView):
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
-    permission_classes = [ModulePermissions]
-    serializer_class = CreateModuleSerializer
+    # uncomment permissions later
+    # permission_classes = [TMPermissions]
+    serializer_class = ModuleSerializer
     queryset = Module.objects.all()
+
+   
+class AnnouncementViewSet(viewsets.ModelViewSet):
+    # permission_classes = [TMPermissions]
+    serializer_class = AnnouncementSerializer
+    queryset = Announcement.objects.all()
+
+
+class SessionViewSet(viewsets.ModelViewSet):
+    # permission_classes = [TMPermissions]
+    serializer_class = SessionSerializer
+    queryset = Session.objects.select_related("module","technical_mentor").prefetch_related("session_comments").all()
+

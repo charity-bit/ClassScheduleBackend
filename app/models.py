@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.utils import timezone
+from datetime import datetime
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+
+from .managers import CustomUserManager
 
 from .managers import CustomUserManager
 
@@ -39,7 +44,7 @@ class User(AbstractUser):
 
 class Module(models.Model):
     technical_mentor = models.ForeignKey(
-        User, related_name="module_tm", on_delete=models.DO_NOTHING, null=True
+        User, related_name="module_tm", on_delete=models.CASCADE, null=True
     )
     name = models.CharField(max_length=255)
     date_created = models.DateTimeField(default=timezone.now)
@@ -101,9 +106,11 @@ class Session(models.Model):
     )
     start = models.TimeField()
     end = models.TimeField()
+    no_hours = models.TimeField()
 
-    def save_session(self):
-        self.save()
+    @property
+    def no_hours(self):
+        return datetime.strptime(str(self.start),"%H:%M:%S") - datetime.strptime(str(self.end),"%H:%M:%S")
 
     def delete_session(self):
         self.delete()
@@ -144,11 +151,11 @@ class Announcement(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    likes = models.ManyToManyField(User, related_name="likes",null=True)
+    likes = models.ManyToManyField(User,related_name='comment_likes',blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     comment = models.TextField()
     session = models.ForeignKey(
-        Session, on_delete=models.CASCADE, related_name="session",null=True
+        Session, on_delete=models.CASCADE, related_name="session_comments"
     )
 
     def __str__(self):
@@ -160,12 +167,12 @@ class Comment(models.Model):
     def delete_comment(self):
         self.delete()
 
-    # def get_likes(self):
+    def get_likes(self):
 
-    #     likes = self.likes.count()
-    #     # likes = self.likes.all()
+        likes = self.likes.count()
+        # likes = self.likes.all()
 
-    #     return likes
+        return likes
 
 
 # class Likes(models.Model):
