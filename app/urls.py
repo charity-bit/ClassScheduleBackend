@@ -38,6 +38,8 @@ urlpatterns = [
     # comments
    #  path("api/comments/create/", views.create_comment, name=""),
    #  path("api/comments/", views.all_comments, name=""),
+
+#    path("api/comments/<int:session_id>/",CommentAPIView.as_view(),name="comment"),
     # announcements
     path("api/announcements/", views.all_announcements, name=""),
     # sessions

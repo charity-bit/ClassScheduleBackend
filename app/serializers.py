@@ -55,9 +55,12 @@ class AnnouncementSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only = True)
-    likes= UserSerializer(read_only = True,many=True)
+    student = UserSerializer(read_only=True)
+    student_id = serializers.IntegerField(write_only = True)
     session=SessionSerializer(read_only = True)
+    session_id = serializers.IntegerField(write_only = True)
+    likes= UserSerializer(read_only = True,many=True)
+    
     class Meta:
         model=Comment
         fields='__all__'

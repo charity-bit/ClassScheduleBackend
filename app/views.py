@@ -144,7 +144,8 @@ class LogoutAPIView(APIView):
 # creating comments using viewset
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    queryset = Comment.objects.select_related('user','likes','session')
+    queryset = Comment.objects.select_related("session","student").all()
+   
 
 
 # @api_view(["POST"])
@@ -229,5 +230,14 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
     # permission_classes = [TMPermissions]
     serializer_class = SessionSerializer
-    queryset = Session.objects.select_related("module","technical_mentor").prefetch_related("session_comments").all()
+    queryset = Session.objects.select_related("module","technical_mentor")
 
+
+
+       
+       
+
+
+
+  
+  
