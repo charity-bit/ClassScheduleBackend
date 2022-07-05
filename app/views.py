@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 import re
+from requests import request
 
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
@@ -8,14 +9,13 @@ from app.serializers import (
     UserCreateSerializer,
     UserSerializer,
     ModuleSerializer,
-    CreateModuleSerializer,
     ProfileSerializer,
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
 )
-from .permissions import ModulePermissions
+from .permissions import TMPermissions
 
 from rest_framework.response import Response
 from app.models import User, Module, Profile, Session, Announcement, Comment
@@ -50,33 +50,33 @@ def api(request):
 
 # login user api
 class LoginAPIView(APIView):
-    '''
+    """
 
     Login User APIView
 
-    '''
+    """
 
     @swagger_auto_schema(request_body=LoginSerializer)
-    def post(self,request,format=None):
-        serializer = LoginSerializer(data = request.data)
+    def post(self, request, format=None):
+        serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validate_user()
             data = {
-                "message":'User logged in successfully',
-                "email":user.email,
-                "user_type":user.user_type
+                "message": "User logged in successfully",
+                "email": user.email,
+                "user_type": user.user_type,
             }
 
             # get auth token
-            token,created = Token.objects.get_or_create(user=user)
-            data['token'] = token.key
+            token, created = Token.objects.get_or_create(user=user)
+            data["token"] = token.key
 
             responseStatus = status.HTTP_200_OK
 
-            return Response(data,status = responseStatus)
+            return Response(data, status=responseStatus)
 
         else:
-            Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # create user api
@@ -112,14 +112,13 @@ class UserCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # logout user apiview
 
+
 class LogoutAPIView(APIView):
-    def get(self,request,format = None):
+    def get(self, request, format=None):
         logout(request)
-        return Response(status = status.HTTP_200_OK)
-        
+        return Response(status=status.HTTP_200_OK)
 
 
 # Adding comments
@@ -182,9 +181,23 @@ class studentprofileupdateAPIview(generics.RetrieveAPIView, mixins.UpdateModelMi
         return self.update(request, *args, **kwargs)
 
 
-
 class ModuleViewSet(viewsets.ModelViewSet):
-    permission_classes = [ModulePermissions]
-    serializer_class = CreateModuleSerializer
+    # uncomment permissions later
+    # permission_classes = [TMPermissions]
+    serializer_class = ModuleSerializer
     queryset = Module.objects.all()
 
+   
+class AnnouncementViewSet(viewsets.ModelViewSet):
+    # permission_classes = [TMPermissions]
+    serializer_class = AnnouncementSerializer
+    queryset = Announcement.objects.all()
+
+
+class SessionViewSet(viewsets.ModelViewSet):
+    # permission_classes = [TMPermissions]
+    serializer_class = SessionSerializer
+    queryset = Session.objects.select_related("module","technical_mentor").prefetch_related("session_comments").all()
+
+  
+  
