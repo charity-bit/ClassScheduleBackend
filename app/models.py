@@ -104,11 +104,15 @@ class Session(models.Model):
     )
     start = models.TimeField()
     end = models.TimeField()
-    no_hours = models.TimeField()
+    # no_hours = models.TimeField()
 
     @property
     def no_hours(self):
-        return datetime.strptime(str(self.start),"%H:%M:%S") - datetime.strptime(str(self.end),"%H:%M:%S")
+        # datetime.timedelta(days=-1, seconds=86280)
+        diff = datetime.strptime(str(self.end),"%H:%M:%S") - datetime.strptime(str(self.start),"%H:%M:%S")
+        tsecs = diff.total_seconds()
+        thrs = int(tsecs/(60*60))
+        return thrs
 
     def delete_session(self):
         self.delete()

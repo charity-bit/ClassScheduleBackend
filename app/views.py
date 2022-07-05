@@ -199,5 +199,12 @@ class SessionViewSet(viewsets.ModelViewSet):
     serializer_class = SessionSerializer
     queryset = Session.objects.select_related("module","technical_mentor").prefetch_related("session_comments").all()
 
+
+
+       
+       
+
+
+
   
   
