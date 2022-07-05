@@ -14,6 +14,7 @@ from app.serializers import (
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
+    AnnouncementCommentSerializer,
 )
 from .permissions import TMPermissions
 
@@ -122,23 +123,6 @@ class LogoutAPIView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-# Adding comments
-# @api_view(["POST"])
-# def create_comment(request, format=None):
-#     user_id=request.user.id
-#     serializers = CommentSerializer(data=request.data,user=user_id)
-#     if serializers.is_valid():
-#         serializers.save()
-#         return Response(serializers.data, status=status.HTTP_201_CREATED)
-#     return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# # getting all comments posted
-# @api_view(["GET"])
-# def all_comments(request, format=None):
-#     comments = Comment.objects.all()
-#     serializers = CommentSerializer(comments, many=True)
-#     return Response(serializers.data)
 
 
 # creating comments using viewset
@@ -147,6 +131,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related("session","student").all()
    
 
+
+class AnnouncementCommentViewSet(viewsets.ModelViewSet):
+    serializer_class = AnnouncementCommentSerializer
+    queryset = Comment.objects.select_related("Announcement","student").all()
 
 # @api_view(["POST"])
 # def LikesView(request, comment_id):

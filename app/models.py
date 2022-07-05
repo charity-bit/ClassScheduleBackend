@@ -161,6 +161,9 @@ class Comment(models.Model):
     session = models.ForeignKey(
         Session, on_delete=models.CASCADE, related_name="session_comments"
     )
+    announcement = models.ForeignKey(
+        Announcement, on_delete=models.CASCADE, related_name="announcement_comments"
+    )
 
     def __str__(self):
         return f"{self.user.name}"

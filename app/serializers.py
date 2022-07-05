@@ -51,7 +51,17 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
    
-
+class AnnouncementCommentSerializer(serializers.ModelSerializer):
+    student = UserSerializer(read_only=True)
+    student_id = serializers.IntegerField(write_only = True)
+    announcement=AnnouncementSerializer(read_only = True)
+    announcement_id = serializers.IntegerField(write_only = True)
+    likes= UserSerializer(read_only = True,many=True)
+    
+    class Meta:
+        model=Comment
+        fields='__all__'
+        
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -65,12 +75,6 @@ class CommentSerializer(serializers.ModelSerializer):
         model=Comment
         fields='__all__'
         
-    # def create(request,validated_data):
-    #     user_id=request.user.id
-    #     comment = Comment.objects.create(user_id,**validated_data)
-    #     comment.save()
-
-    #     return comment
 
 
 # class LikesSerializer(serializers.ModelSerializer):
