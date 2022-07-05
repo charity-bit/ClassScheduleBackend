@@ -65,19 +65,29 @@ class AnnouncementSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only = True) 
+    user = UserSerializer(read_only = True)
+    likes= UserSerializer(read_only = True,many=True)
+    session=SessionSerializer(read_only = True)
     class Meta:
         model=Comment
         fields='__all__'
         
-    def create(self,validated_data):
-       
-        comment = Comment.objects.create(**validated_data)
-        comment.save()
+    # def create(request,validated_data):
+    #     user_id=request.user.id
+    #     comment = Comment.objects.create(user_id,**validated_data)
+    #     comment.save()
 
-        return comment
+    #     return comment
 
-    
+
+# class LikesSerializer(serializers.ModelSerializer):
+#     user=UserSerializer(many=False,read_only=True)
+#     comment=CommentSerializer(many=False,read_only=True)
+#     class Meta:
+#         model = Likes
+#         # fields='__all__'
+#         fields = ['pk','user','comment_id',]
+
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

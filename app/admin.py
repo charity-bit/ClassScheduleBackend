@@ -7,6 +7,7 @@ from app.models import User,Profile,Comment,Session,Module,Announcement
 admin.site.register(User)
 admin.site.register(Profile)
 admin.site.register(Comment)
+# admin.site.register(Likes)
 admin.site.register(Session)
 admin.site.register(Module)
 admin.site.register(Announcement)

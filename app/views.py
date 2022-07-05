@@ -14,6 +14,7 @@ from app.serializers import (
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
+    
 )
 from .permissions import ModulePermissions
 
@@ -36,7 +37,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from drf_yasg.utils import swagger_auto_schema
-
+from django.db.models import Q 
 # from .permissions import *
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
@@ -125,7 +126,8 @@ class LogoutAPIView(APIView):
 # Adding comments
 # @api_view(["POST"])
 # def create_comment(request, format=None):
-#     serializers = CommentSerializer(data=request.data)
+#     user_id=request.user.id
+#     serializers = CommentSerializer(data=request.data,user=user_id)
 #     if serializers.is_valid():
 #         serializers.save()
 #         return Response(serializers.data, status=status.HTTP_201_CREATED)
@@ -143,7 +145,33 @@ class LogoutAPIView(APIView):
 # creating comments using viewset
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.select_related('user','likes','session')
+
+
+# @api_view(["POST"])
+# def LikesView(request, comment_id):
+#     current_user = request.user
+#     user = User.objects.get(email=current_user.email)
+#     user_id=User.objects.get(id=user.id)
+#     # user_id = User.objects.get(id=9)
+    
+#     # post_id = Post.objects.get(pk=pk)
+#     try:
+#         comment_id = Comment.objects.get(comment_id=comment_id)
+#     except Comment.DoesNotExist:
+#         comment_id= None
+#     # get_object_or_404(Likes, pk=post_id)
+#     check = Likes.objects.filter(Q(user_id=user_id) and Q(comment_id=comment_id))
+#     # check=Likes.object.get_object_or_404(Likes, pk=comment_id)
+#     if(check.exists()):
+#         return Response({
+#             "status": status.HTTP_400_BAD_REQUEST,
+#             "message": "You only like once"
+#         })
+#     new_like = Likes.objects.create(user_id=user_id, comment_id=comment_id)
+#     new_like.save()
+#     serializer = LikesSerializer(new_like)
+#     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 

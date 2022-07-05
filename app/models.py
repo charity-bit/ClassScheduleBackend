@@ -144,11 +144,11 @@ class Announcement(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    likes = models.ManyToManyField(User, related_name="likes")
+    likes = models.ManyToManyField(User, related_name="likes",null=True)
     date_created = models.DateTimeField(default=timezone.now)
     comment = models.TextField()
     session = models.ForeignKey(
-        Session, on_delete=models.CASCADE, related_name="session"
+        Session, on_delete=models.CASCADE, related_name="session",null=True
     )
 
     def __str__(self):
@@ -160,9 +160,31 @@ class Comment(models.Model):
     def delete_comment(self):
         self.delete()
 
-    def get_likes(self):
+    # def get_likes(self):
 
-        likes = self.likes.count()
-        # likes = self.likes.all()
+    #     likes = self.likes.count()
+    #     # likes = self.likes.all()
 
-        return likes
+    #     return likes
+
+
+# class Likes(models.Model):
+#     created_at=models.DateTimeField(default=timezone.now)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
+#     comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
+
+#     def __str__(self):
+#         return f"{self.user.name}"
+
+#     def save_likes(self):
+#         self.save()
+
+#     def delete_likes(self):
+#         self.delete()
+
+#     def get_likes(self):
+
+#         likes = self.likes.count()
+#         # likes = self.likes.all()
+
+#         return likes

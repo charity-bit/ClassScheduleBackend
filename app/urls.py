@@ -39,6 +39,9 @@ urlpatterns = [
    # path('api/comments/create/', views.create_comment,name=''),
    # path('api/comments/', views.all_comments,name=''),
 
+   # Likes
+   # path('api/likes/<comment_id>', views.LikesView,name=''),
+
    # announcements
    path('api/announcements/', views.all_announcements,name=''),
 
