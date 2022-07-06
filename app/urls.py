@@ -1,7 +1,7 @@
 from django.urls import path
 
 from app import views
-from app.views import AnnouncementViewSet, ModuleViewSet, SessionViewSet,CommentViewSet,AnnouncementCommentViewSet
+from app.views import AnnouncementViewSet, ModuleViewSet, SessionViewSet,CommentViewSet,AnnouncementCommentViewSet, like_comment
 
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
@@ -32,6 +32,7 @@ router.register(r"sessions",SessionViewSet,basename="session")
 router.register(r'comments',CommentViewSet,basename="comment")
 router.register(r'announ-comments',AnnouncementCommentViewSet,basename="announ_commment")
 
+
 urlpatterns = [
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
@@ -40,7 +41,7 @@ urlpatterns = [
    #  path("api/comments/create/", views.create_comment, name=""),
    #  path("api/comments/", views.all_comments, name=""),
 
-#    path("api/comments/<int:session_id>/",CommentAPIView.as_view(),name="comment"),
+   path("api/like/comment/<int:comment_id>/",views.like_comment,name="likes"),
     # announcements
     path("api/announcements/", views.all_announcements, name=""),
     # sessions
@@ -51,5 +52,8 @@ urlpatterns = [
     path("api/user/login/", views.LoginAPIView.as_view(), name=""),
     path("api/user/logout/", views.LogoutAPIView.as_view(), name=""),
     path('change_password/<int:pk>/', views.ChangePasswordView.as_view(), name='auth_change_password'),
+    # update student profile
+    path("api/student/<int:pk>/update/profile/", views.StudentProfileUpdateAPIview.as_view(), name="student_update_profile"),
+    
 
 ] + router.urls

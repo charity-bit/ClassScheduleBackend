@@ -41,6 +41,7 @@ class User(AbstractUser):
     def delete_user(self):
         self.delete()
 
+# class Student(models.Model):
 
 class Module(models.Model):
     technical_mentor = models.ForeignKey(
@@ -138,6 +139,7 @@ class Session(models.Model):
         return f"{self.title}"
 
 
+
 class Announcement(models.Model):
     technical_mentor = models.ForeignKey(
         User, related_name="announcement_tm", on_delete=models.CASCADE
@@ -157,9 +159,9 @@ class Announcement(models.Model):
 
 class AnnounComment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Announ_comments")
-    announ_likes = models.ManyToManyField(User,related_name='announ_comment_likes',blank=True)
+    likes = models.ManyToManyField(User,related_name='announcement_likes',blank=True)
     date_created = models.DateTimeField(default=timezone.now)
-    announ_comment = models.TextField()
+    comment = models.TextField()
     announcement = models.ForeignKey(
         Announcement, on_delete=models.CASCADE, related_name="announ_comments"
     )
@@ -173,20 +175,19 @@ class AnnounComment(models.Model):
     def delete_comment(self):
         self.delete()
 
-    def get_likes(self):
+    # def get_likes(self):
 
-        likes = self.announ_likes.count()
+    #     likes = self.announ_likes.count()
         
 
-        return likes
-
+    #     return likes
 
 
 
 
 class Comment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    likes = models.ManyToManyField(User,related_name='comment_likes',blank=True)
+    likes= models.ManyToManyField(User,related_name="likes",blank=True,null=True) 
     date_created = models.DateTimeField(default=timezone.now)
     comment = models.TextField()
     session = models.ForeignKey(
@@ -203,31 +204,13 @@ class Comment(models.Model):
     def delete_comment(self):
         self.delete()
 
-    def get_likes(self):
+    # def get_likes(self):
 
-        likes = self.likes.count()
-        # likes = self.likes.all()
+    #     likes = self.likes.count()
+    #     # likes = self.likes.all()
 
-        return likes
+    #     return likes
 
 
-# class Likes(models.Model):
-#     created_at=models.DateTimeField(default=timezone.now)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
-#     comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
 
-#     def __str__(self):
-#         return f"{self.user.name}"
 
-#     def save_likes(self):
-#         self.save()
-
-#     def delete_likes(self):
-#         self.delete()
-
-#     def get_likes(self):
-
-#         likes = self.likes.count()
-#         # likes = self.likes.all()
-
-#         return likes

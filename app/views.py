@@ -16,6 +16,7 @@ from app.serializers import (
     LoginSerializer,
     AnnouncementCommentSerializer,
     ChangePasswordSerializer,
+   
 )
 from .permissions import TMPermissions
 
@@ -67,6 +68,7 @@ class LoginAPIView(APIView):
                 "message": "User logged in successfully",
                 "email": user.email,
                 "user_type": user.user_type,
+                "user_id":user.id
             }
 
             # get auth token
@@ -93,6 +95,7 @@ class UserCreateAPIView(APIView):
     @swagger_auto_schema(request_body=UserCreateSerializer)
     def post(self, request, format=None):
         data = request.data
+        print("data",data)
         email = data["email"]
 
         regex = "@([a-z\S]+)"
@@ -138,6 +141,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     queryset = Comment.objects.select_related("session","student").all()
    
+
 
 
 class AnnouncementCommentViewSet(viewsets.ModelViewSet):
@@ -196,18 +200,40 @@ def get_available_session(request, session_query):
 
 
 # Updating the student Profile
-class StudentProfileUpdateAPIview(generics.GenericAPIView):
-    serializer_class = UpdateProfileSerializer
-    lookup_field = 'email'
-    queryset = Profile.objects.all()
+# class StudentProfileUpdateAPIview(generics.GenericAPIView):
+#     serializer_class = UpdateProfileSerializer
+#     lookup_field = 'email'
+#     # permission_classes = [IsAuthenticated]
+    
+#     queryset = Profile.objects.all()
   
-    def put(self, request, *args, **kwargs):
-        serializer = UpdateProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def put(self, request, *args, **kwargs):
+#         serializer = UpdateProfileSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class StudentProfileUpdateAPIview(generics.GenericAPIView):
+    # lookup_field = 'user'
+    queryset = Profile.objects.all()
+    serializer_class = UpdateProfileSerializer
+
+    def put(self, request, pk=None):
+        instance = self.get_object()
+        print("instance",instance)
+        instance.bio=request.data['bio']
+        instance.profile_image=request.data['image']
+        # instance.active = False
+        instance.save(update_fields=['bio','profile_image'])
+        return Response('done')
+
+# class StudentProfileUpdateAPIview(generics.UpdateAPIView):
+#     lookup_field='pk'
+#     permission_classes = [IsAuthenticated]
+#     queryset = User.objects.all()
+#     serializer_class = UpdateProfileSerializer
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
@@ -229,11 +255,31 @@ class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related("module","technical_mentor")
 
 
-
-       
-       
-
-
+@api_view(["POST"])
+def like_comment(request,comment_id):
+    user_id=request.data['user']
+    user=User.objects.filter(pk=user_id).first()
+    comment=Comment.objects.filter(pk=comment_id).first()
+    if user is None:
+        return Response({
+            "message":"Authentication required"
+        })
+    
+    if comment is not None:
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+            return Response({
+            "message":"like removed"
+        })
+        else:
+            comment.likes.add(user)
+            return Response({
+            "message":"like added"
+        })
+    else:
+        return Response({
+            "message":"comment not found"
+        })
 
   
   
