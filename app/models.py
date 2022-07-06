@@ -77,6 +77,7 @@ class Profile(models.Model):
     profile_image = CloudinaryField("image")
     modules = models.ManyToManyField(Module, blank=True)
     bio = models.TextField()
+    
 
     def __str__(self):
         return f"{self.user.email}"
@@ -192,7 +193,7 @@ class Comment(models.Model):
         Session, on_delete=models.CASCADE, related_name="session_comments"
     )
    
-   
+
     def __str__(self):
         return f"{self.user.name}"
 

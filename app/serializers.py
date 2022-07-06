@@ -93,7 +93,20 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
-        # read_only_fields=['user','modules']
+
+
+        
+        def update(self, instance, validated_data):
+            user = self.context['request'].user
+
+            if user.pk != instance.pk:
+                raise serializers.ValidationError({"authorize": "You dont have permission for this user."})
+
+            instance.bio = validated_data['bio']
+
+            instance.save()
+
+            return instance
 
 
 class LoginSerializer(serializers.Serializer):
