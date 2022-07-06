@@ -19,7 +19,7 @@ from app.serializers import (
 from .permissions import TMPermissions
 
 from rest_framework.response import Response
-from app.models import User, Module, Profile, Session, Announcement, Comment
+from app.models import User, Module, Profile, Session, Announcement, Comment,AnnounComment
 from rest_framework import status, generics
 from django.http import Http404
 
@@ -134,7 +134,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class AnnouncementCommentViewSet(viewsets.ModelViewSet):
     serializer_class = AnnouncementCommentSerializer
-    queryset = Comment.objects.select_related("Announcement","student").all()
+    queryset = AnnounComment.objects.select_related("student","announcement").all()
 
 # @api_view(["POST"])
 # def LikesView(request, comment_id):

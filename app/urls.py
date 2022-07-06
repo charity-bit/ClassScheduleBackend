@@ -29,8 +29,8 @@ router = DefaultRouter()
 router.register(r"modules", ModuleViewSet, basename="Module")
 router.register(r"announcements", AnnouncementViewSet, basename="Announcement")
 router.register(r"sessions",SessionViewSet,basename="session")
-router.register(r'comments',CommentViewSet)
-router.register(r'announcements/comments',AnnouncementCommentViewSet)
+router.register(r'comments',CommentViewSet,basename="comment")
+router.register(r'announ-comments',AnnouncementCommentViewSet,basename="announ_commment")
 
 urlpatterns = [
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),

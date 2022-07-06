@@ -153,6 +153,36 @@ class Announcement(models.Model):
         self.delete()
 
 
+
+class AnnounComment(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Announ_comments")
+    announ_likes = models.ManyToManyField(User,related_name='announ_comment_likes',blank=True)
+    date_created = models.DateTimeField(default=timezone.now)
+    announ_comment = models.TextField()
+    announcement = models.ForeignKey(
+        Announcement, on_delete=models.CASCADE, related_name="announ_comments"
+    )
+
+    def __str__(self):
+        return f"{self.user.name}"
+
+    def save_comment(self):
+        self.save()
+
+    def delete_comment(self):
+        self.delete()
+
+    def get_likes(self):
+
+        likes = self.announ_likes.count()
+        
+
+        return likes
+
+
+
+
+
 class Comment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     likes = models.ManyToManyField(User,related_name='comment_likes',blank=True)
@@ -161,10 +191,8 @@ class Comment(models.Model):
     session = models.ForeignKey(
         Session, on_delete=models.CASCADE, related_name="session_comments"
     )
-    announcement = models.ForeignKey(
-        Announcement, on_delete=models.CASCADE, related_name="announcement_comments"
-    )
-
+   
+   
     def __str__(self):
         return f"{self.user.name}"
 

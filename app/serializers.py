@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Profile, Comment, Module, Session, Announcement
+from .models import User, Profile, Comment, Module, Session, Announcement,AnnounComment
 from django.contrib.auth import authenticate
 import re
 
@@ -56,10 +56,10 @@ class AnnouncementCommentSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField(write_only = True)
     announcement=AnnouncementSerializer(read_only = True)
     announcement_id = serializers.IntegerField(write_only = True)
-    likes= UserSerializer(read_only = True,many=True)
+    announ_likes= UserSerializer(read_only = True,many=True)
     
     class Meta:
-        model=Comment
+        model=AnnounComment
         fields='__all__'
         
 
