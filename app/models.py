@@ -104,7 +104,7 @@ class Session(models.Model):
     )
     start = models.TimeField()
     end = models.TimeField()
-    # no_hours = models.TimeField()
+    no_hours = models.IntegerField()
 
     @property
     def no_hours(self):

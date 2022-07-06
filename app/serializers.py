@@ -40,7 +40,7 @@ class SessionSerializer(serializers.ModelSerializer):
     module = ModuleSerializer(read_only=True)
     module_id = serializers.IntegerField(write_only = True)
     # session_comments = CommentSerializer(read_only = True)
-    no_hours = serializers.CharField(read_only =True)
+    no_hours = serializers.IntegerField(read_only =True)
 
     class Meta:
         model = Session
