@@ -50,5 +50,6 @@ urlpatterns = [
     path("api/user/create/", views.UserCreateAPIView.as_view(), name=""),
     path("api/user/login/", views.LoginAPIView.as_view(), name=""),
     path("api/user/logout/", views.LogoutAPIView.as_view(), name=""),
+    path('change_password/<int:pk>/', views.ChangePasswordView.as_view(), name='auth_change_password'),
 
 ] + router.urls

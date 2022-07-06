@@ -15,6 +15,7 @@ from app.serializers import (
     CommentSerializer,
     LoginSerializer,
     AnnouncementCommentSerializer,
+    ChangePasswordSerializer,
 )
 from .permissions import TMPermissions
 
@@ -121,6 +122,13 @@ class LogoutAPIView(APIView):
     def get(self, request, format=None):
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
 
 
 
