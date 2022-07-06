@@ -36,12 +36,11 @@ router.register(r'announ-comments',AnnouncementCommentViewSet,basename="announ_c
 urlpatterns = [
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
-    # path("api/", views.api, name="api"),
-    # comments
-   #  path("api/comments/create/", views.create_comment, name=""),
-   #  path("api/comments/", views.all_comments, name=""),
-
+    
    path("api/like/comment/<int:comment_id>/",views.like_comment,name="likes"),
+    # announcements comments likes
+    path("api/like/announcement/comment/<int:announcomment_id>/",views.like_announ_comment,name="announ-likes"),
+
     # announcements
     path("api/announcements/", views.all_announcements, name=""),
     # sessions
@@ -52,6 +51,8 @@ urlpatterns = [
     path("api/user/login/", views.LoginAPIView.as_view(), name=""),
     path("api/user/logout/", views.LogoutAPIView.as_view(), name=""),
     path('change_password/<int:pk>/', views.ChangePasswordView.as_view(), name='auth_change_password'),
+    # Get profile
+    path("api/student/profile" ,views.StudentProfileAPIview.as_view(),name="student_profile"),
     # update student profile
     path("api/student/<int:pk>/update/profile/", views.StudentProfileUpdateAPIview.as_view(), name="student_update_profile"),
     

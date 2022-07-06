@@ -58,7 +58,7 @@ class AnnouncementCommentSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField(write_only = True)
     announcement=AnnouncementSerializer(read_only = True)
     announcement_id = serializers.IntegerField(write_only = True)
-    announ_likes= UserSerializer(read_only = True,many=True)
+    likes= UserSerializer(read_only = True,many=True)
     
     class Meta:
         model=AnnounComment
@@ -92,12 +92,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
-    # user_id = serializers.IntegerField(write_only = True)
-    # modules = ModuleSerializer(read_only=True)
-    # modules_id = serializers.IntegerField(write_only = True)
+   
     user = UserSerializer(read_only=True,many=False)
-    # user_id = UserSerializer(write_only=True)
     class Meta:
         model = Profile
         fields = "__all__"
@@ -105,7 +101,12 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             "modules":{"read_only":True}
         }
 
-        
+
+    def get_profile(self,instance,data):
+        instance.bio = data.get('bio', instance.bio)
+        instance = super().get_fields(instance, data)
+        return instance
+
     def update(request, instance, validated_data):
         instance.bio = validated_data['bio']
 
@@ -159,7 +160,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         serializers.ValidationError('Invalid Email')
 
 
-
+# Changing the password
 class ChangePasswordSerializer(serializers.ModelSerializer):
     
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])

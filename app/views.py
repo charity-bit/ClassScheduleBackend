@@ -148,30 +148,6 @@ class AnnouncementCommentViewSet(viewsets.ModelViewSet):
     serializer_class = AnnouncementCommentSerializer
     queryset = AnnounComment.objects.select_related("student","announcement").all()
 
-# @api_view(["POST"])
-# def LikesView(request, comment_id):
-#     current_user = request.user
-#     user = User.objects.get(email=current_user.email)
-#     user_id=User.objects.get(id=user.id)
-#     # user_id = User.objects.get(id=9)
-    
-#     # post_id = Post.objects.get(pk=pk)
-#     try:
-#         comment_id = Comment.objects.get(comment_id=comment_id)
-#     except Comment.DoesNotExist:
-#         comment_id= None
-#     # get_object_or_404(Likes, pk=post_id)
-#     check = Likes.objects.filter(Q(user_id=user_id) and Q(comment_id=comment_id))
-#     # check=Likes.object.get_object_or_404(Likes, pk=comment_id)
-#     if(check.exists()):
-#         return Response({
-#             "status": status.HTTP_400_BAD_REQUEST,
-#             "message": "You only like once"
-#         })
-#     new_like = Likes.objects.create(user_id=user_id, comment_id=comment_id)
-#     new_like.save()
-#     serializer = LikesSerializer(new_like)
-#     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
@@ -199,26 +175,28 @@ def get_available_session(request, session_query):
     return Response(serializer.data)
 
 
-# Updating the student Profile
-# class StudentProfileUpdateAPIview(generics.GenericAPIView):
-#     serializer_class = UpdateProfileSerializer
-#     lookup_field = 'email'
-#     # permission_classes = [IsAuthenticated]
-    
-#     queryset = Profile.objects.all()
-  
-#     def put(self, request, *args, **kwargs):
-#         serializer = UpdateProfileSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentProfileAPIview(generics.GenericAPIView):
+    # lookup_field = 'user'
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def get(self, request, pk=None):
+        instance = self.get_object()
+        print("instance",instance)
+        instance.bio=request.data['bio']
+        instance.profile_image=request.data['image']
+        instance.get_fields=['bio','profile_image']
+        return Response('done')
+
 
 
 class StudentProfileUpdateAPIview(generics.GenericAPIView):
     # lookup_field = 'user'
     queryset = Profile.objects.all()
     serializer_class = UpdateProfileSerializer
+
 
     def put(self, request, pk=None):
         instance = self.get_object()
@@ -229,11 +207,6 @@ class StudentProfileUpdateAPIview(generics.GenericAPIView):
         instance.save(update_fields=['bio','profile_image'])
         return Response('done')
 
-# class StudentProfileUpdateAPIview(generics.UpdateAPIView):
-#     lookup_field='pk'
-#     permission_classes = [IsAuthenticated]
-#     queryset = User.objects.all()
-#     serializer_class = UpdateProfileSerializer
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
@@ -282,4 +255,28 @@ def like_comment(request,comment_id):
         })
 
   
-  
+@api_view(["POST"])
+def like_announ_comment(request,announcomment_id):
+    user_id=request.data['user']
+    user=User.objects.filter(pk=user_id).first()
+    announcomment=AnnounComment.objects.filter(pk=announcomment_id).first()
+    if user is None:
+        return Response({
+            "message":"Authentication required"
+        })
+    
+    if announcomment is not None:
+        if user in announcomment.likes.all():
+            announcomment.likes.remove(user)
+            return Response({
+            "message":"like removed"
+        })
+        else:
+            announcomment.likes.add(user)
+            return Response({
+            "message":"like added"
+        })
+    else:
+        return Response({
+            "message":"comment not found"
+        })
