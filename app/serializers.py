@@ -17,10 +17,13 @@ class UserSerializer(serializers.ModelSerializer):
 class ModuleSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
-
     class Meta:
         model = Module
         fields = "__all__"
+
+
+       
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -31,13 +34,21 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only = True)
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        
+    # create_comment=Comment.objects.create()
 class SessionSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
     module = ModuleSerializer(read_only=True)
     module_id = serializers.IntegerField(write_only = True)
     # session_comments = CommentSerializer(read_only = True)
-    no_hours = serializers.CharField(read_only =True)
+    no_hours = serializers.IntegerField(read_only =True)
+
 
     class Meta:
         model = Session
@@ -47,7 +58,8 @@ class SessionSerializer(serializers.ModelSerializer):
 class AnnouncementSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
-
+   
+    
     class Meta:
         model = Announcement
         fields = "__all__"
@@ -81,12 +93,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields='__all__'
         
 
-    def update(self, instance, validated_data):
-        liked_by = validated_data.pop('liked_by')
-        for i in liked_by:
-            instance.liked_by.add(i)
-        instance.save()
-        return instance
+    # create_comment=Comment.objects.create()
 
 
 

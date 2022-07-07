@@ -1,9 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 import re
-from requests import request
-
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
+from app import serializers
 from app.serializers import (
     AnnouncementSerializer,
     UserCreateSerializer,
@@ -227,6 +226,77 @@ class SessionViewSet(viewsets.ModelViewSet):
     serializer_class = SessionSerializer
     queryset = Session.objects.select_related("module","technical_mentor")
 
+
+
+  # get modules by a certain TM
+@api_view(['GET'])
+def get_tm_modules(request,tm_id):
+    user = User.objects.get(id = tm_id)
+    # fix check if there is a user
+    
+    if user.user_type == 'TM':
+        modules = Module.objects.filter(technical_mentor = user).all()
+        serializers = ModuleSerializer(modules,many=True)
+        return Response(serializers.data)
+            
+    else:
+        # if the user is not a tm
+        return Response({"message":"The user is not a Technical_mentor"})
+
+ 
+
+@api_view(["POST"])
+def add_student(request,module_id,student_id):
+    user = User.objects.get(id = student_id)
+    if user.user_type == 'STUD':
+        profile = Profile.objects.get(user = user)
+        module = Module.objects.get(id = module_id)
+        if module in profile.modules.all():
+            return Response({"message":"This user is already inrolled in the module"})
+
+        else:
+            profile.modules.add(module)
+            return Response({"messsage":"module added successfully"})
+    else:
+        return Response({
+            "message":'This user is not a student'
+        })
+
+# get sessions for a specific module
+@api_view(["GET"])
+def get_module_sessions(request,module_id):
+   
+    module = Module.objects.get(id = module_id)
+    sessions = Session.objects.filter(module = module).all()
+    serializers = SessionSerializer(sessions, many=True)
+    return Response(serializers.data)
+
+# get students modules
+@api_view(['GET'])
+def get_student_modules(request,student_id):
+    # user_id=request.data['user']
+    user = User.objects.get(id = student_id)
+    if user.user_type == 'STUD':
+        profile = Profile.objects.get(user = user)
+        modules = profile.modules.all()
+        serializers = ModuleSerializer(modules,many=True)
+        return Response(serializers.data)
+
+    else:
+        return Response({"message":"The user is not a student"})
+
+
+@api_view(['GET'])
+def technical_mentors(request):
+    technical_mentors = User.objects.filter(user_type = 'TM').all()
+    serializers = UserSerializer(technical_mentors,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def students(request):
+    students = User.objects.filter(user_type = 'STUD').all()
+    serializers = UserSerializer(students,many=True)
+    return Response(serializers.data)
 
 @api_view(["POST"])
 def like_comment(request,comment_id):
