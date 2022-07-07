@@ -1,4 +1,3 @@
-from asyncore import write
 from rest_framework import serializers
 from .models import User, Profile, Comment, Module, Session, Announcement
 from django.contrib.auth import authenticate
@@ -56,7 +55,6 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
    
-
 
 
 

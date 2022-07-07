@@ -8,6 +8,8 @@ from django.db.models.signals import post_save
 
 from .managers import CustomUserManager
 
+from .managers import CustomUserManager
+
 
 # Create your models here.
 class User(AbstractUser):
@@ -42,7 +44,7 @@ class User(AbstractUser):
 
 class Module(models.Model):
     technical_mentor = models.ForeignKey(
-        User, related_name="module_tm", on_delete=models.CASCADE, null=True
+        User, related_name="module_tm", on_delete=models.DO_NOTHING, null=True
     )
     name = models.CharField(max_length=255)
     date_created = models.DateTimeField(default=timezone.now)

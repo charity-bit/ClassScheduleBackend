@@ -1,21 +1,23 @@
+import profile
 from django.http import HttpResponse, JsonResponse
 import re
-from requests import request
 
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
+from app import serializers
 from app.serializers import (
     AnnouncementSerializer,
     UserCreateSerializer,
     UserSerializer,
     ModuleSerializer,
+    CreateModuleSerializer,
     ProfileSerializer,
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
 )
-from .permissions import TMPermissions
+from .permissions import ModulePermissions
 
 from rest_framework.response import Response
 from app.models import User, Module, Profile, Session, Announcement, Comment
@@ -220,3 +222,50 @@ def get_tm_modules(request,tm_id):
 
 
   
+    permission_classes = [ModulePermissions]
+    serializer_class = CreateModuleSerializer
+    queryset = Module.objects.all()
+
+
+@api_view(["POST"])
+def add_student(request,module_id,student_id):
+    user = User.objects.get(id = student_id)
+    if user.user_type == 'STUD':
+        profile = Profile.objects.get(user = user)
+        module = Module.objects.get(id = module_id)
+        if module in profile.modules.all():
+            return Response({"message":"This user is already inrolled in the module"})
+
+        else:
+            profile.modules.add(module)
+            return Response({"messsage":"module added successfully"})
+    else:
+        return Response({
+            "message":'This user is not a student'
+        })
+
+# get sessions for a specific module
+@api_view(["GET"])
+def get_module_sessions(request,module_id):
+   
+    module = Module.objects.get(id = module_id)
+    sessions = Session.objects.filter(module = module).all()
+    serializers = SessionSerializer(sessions, many=True)
+    return Response(serializers.data)
+
+# get students modules
+@api_view(['GET'])
+def get_student_modules(request,student_id):
+    # user_id=request.data['user']
+    user = User.objects.get(id = student_id)
+    if user.user_type == 'STUD':
+        profile = Profile.objects.get(user = user)
+        modules = profile.modules.all()
+        serializers = ModuleSerializer(modules,many=True)
+        return Response(serializers.data)
+
+    else:
+        return Response({"message":"The user is not a student"})
+
+
+
