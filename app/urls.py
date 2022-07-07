@@ -47,4 +47,8 @@ urlpatterns = [
     path("api/user/create/", views.UserCreateAPIView.as_view(), name=""),
     path("api/user/login/", views.LoginAPIView.as_view(), name=""),
     path("api/user/logout/", views.LogoutAPIView.as_view(), name=""),
+
+    #get tm modules 
+    path('api/technical-mentor/<int:tm_id>/modules/',views.get_tm_modules,name='')
+
 ] + router.urls

@@ -206,5 +206,19 @@ class SessionViewSet(viewsets.ModelViewSet):
 
 
 
-  
+  # get modules by a certain TM
+
+@api_view(['GET'])
+def get_tm_modules(request,tm_id):
+    user = User.objects.get(id = tm_id)
+    if user.user_type == 'TM':
+        modules = Module.objects.get(technical_mentor = user)
+        serializers = ModuleSerializer(modules,many=True)
+        return Response(serializers.data)
+    else:
+        return Response({"message":"The user is not a Technical_mentor"})
+
+
+
+
   
