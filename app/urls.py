@@ -52,8 +52,9 @@ urlpatterns = [
 
    # add student to module
    path("api/module/<int:module_id>/student/<int:student_id>/",views.add_student,name="add-student"),
+   path("api/student/<int:student_id>/modules/",views.get_student_modules,name='student_modules'),
 
 
-   
+   path("api/module/<int:module_id>/sessions/",views.get_module_sessions,name='module-sessions'),
 
 ] + router.urls

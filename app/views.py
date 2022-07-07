@@ -4,6 +4,7 @@ import re
 
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
+from app import serializers
 from app.serializers import (
     AnnouncementSerializer,
     UserCreateSerializer,
@@ -204,3 +205,29 @@ def add_student(request,module_id,student_id):
         return Response({
             "message":'This user is not a student'
         })
+
+# get sessions for a specific module
+@api_view(["GET"])
+def get_module_sessions(request,module_id):
+   
+    module = Module.objects.get(id = module_id)
+    sessions = Session.objects.filter(module = module).all()
+    serializers = SessionSerializer(sessions, many=True)
+    return Response(serializers.data)
+
+# get students modules
+@api_view(['GET'])
+def get_student_modules(request,student_id):
+    # user_id=request.data['user']
+    user = User.objects.get(id = student_id)
+    if user.user_type == 'STUD':
+        profile = Profile.objects.get(user = user)
+        modules = profile.modules.all()
+        serializers = ModuleSerializer(modules,many=True)
+        return Response(serializers.data)
+
+    else:
+        return Response({"message":"The user is not a student"})
+
+
+
