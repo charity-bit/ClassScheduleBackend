@@ -200,24 +200,21 @@ class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related("module","technical_mentor")
 
 
-
-       
-       
-
-
-
   # get modules by a certain TM
-
 @api_view(['GET'])
 def get_tm_modules(request,tm_id):
     user = User.objects.get(id = tm_id)
+    # fix check if there is a user
+    
     if user.user_type == 'TM':
-        modules = Module.objects.get(technical_mentor = user)
+        modules = Module.objects.filter(technical_mentor = user).all()
         serializers = ModuleSerializer(modules,many=True)
         return Response(serializers.data)
+            
     else:
         return Response({"message":"The user is not a Technical_mentor"})
 
+ 
 
 
 
