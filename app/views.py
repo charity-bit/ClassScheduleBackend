@@ -212,6 +212,7 @@ def get_tm_modules(request,tm_id):
         return Response(serializers.data)
             
     else:
+        # if the user is not a tm
         return Response({"message":"The user is not a Technical_mentor"})
 
  
