@@ -1,7 +1,7 @@
 from django.urls import path
 
 from app import views
-from app.views import ModuleViewSet, students, technical_mentors
+from app.views import AnnouncementViewSet, CommentViewSet, ModuleViewSet, SessionViewSet, get_session_comments, students, technical_mentors
 
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
@@ -26,7 +26,10 @@ schema_view = get_schema_view(
 
 router = DefaultRouter()
 
-router.register(r'modules',ModuleViewSet)
+router.register(r'modules',ModuleViewSet,basename='module')
+router.register(r'announcements',AnnouncementViewSet,basename='announcement')
+router.register(r'sessions',SessionViewSet,basename='session')
+router.register(r'comments',CommentViewSet,basename='comment')
 
 
 urlpatterns = [
@@ -35,9 +38,6 @@ urlpatterns = [
    path('api/',views.api,name='api'),
    
    # comments
-   path('api/comments/create/', views.create_comment,name=''),
-   path('api/comments/', views.all_comments,name=''),
-
    # announcements
    path('api/announcements/', views.all_announcements,name=''),
    
@@ -48,7 +48,7 @@ urlpatterns = [
 
    # sessions
    path('api/sessions/detail/', views.get_session_details,name=''),
-   path('api/sessions/search/', views.get_available_session,name=''),
+   path('api/sessions/search/<str:session_query>/', views.get_available_session,name=''),
    
    # Create user api
    path('api/user/create/',views.UserCreateAPIView.as_view(),name=''),
@@ -72,7 +72,10 @@ urlpatterns = [
    path("api/module/<int:module_id>/sessions/",views.get_module_sessions,name='module-sessions'),
    path("api/technical-mentor/<int:tm_id>/modules/",views.get_tm_modules,name='tm-modules'),
    path("api/technical-mentors/",views.technical_mentors,name=''),
-   path("api/students",views.students,name='')
+   path("api/students",views.students,name=''),
+
+   # get session comments
+   path("api/session/<int:session_id>/comments/",views.get_session_comments,name='')
 
 
 ] + router.urls

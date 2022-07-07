@@ -1,3 +1,4 @@
+from asyncore import read
 from rest_framework import serializers
 from .models import User, Profile, Comment, Module, Session, Announcement,AnnounComment
 from django.contrib.auth import authenticate
@@ -34,13 +35,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only = True)
-    class Meta:
-        model = Comment
-        fields = '__all__'
-        
-    # create_comment=Comment.objects.create()
 class SessionSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
@@ -55,6 +49,17 @@ class SessionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only = True)
+    user_id = serializers.IntegerField(write_only = True)
+    session=SessionSerializer(read_only = True)
+    session_id = serializers.IntegerField(write_only = True)
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        
+    # create_comment=Comment.objects.create()
+
 class AnnouncementSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
@@ -68,7 +73,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
 class AnnouncementCommentSerializer(serializers.ModelSerializer):
     student = UserSerializer(read_only=True)
     student_id = serializers.IntegerField(write_only = True)
-    announcement=AnnouncementSerializer(read_only = True)
+    announcement = AnnouncementSerializer(read_only = True)
     announcement_id = serializers.IntegerField(write_only = True)
     likes= UserSerializer(read_only = True,many=True)
     
@@ -78,20 +83,7 @@ class AnnouncementCommentSerializer(serializers.ModelSerializer):
         
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    student = UserSerializer(read_only=True)
-    student_id = serializers.IntegerField(write_only = True)
-    session=SessionSerializer(read_only = True)
-    session_id = serializers.IntegerField(write_only = True)
-    # liked_by=UserSerializer(read_only = True)
-    liked_by = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=User.objects.all())
 
-    class Meta:
-        model=Comment
-        fields='__all__'
-        
 
     # create_comment=Comment.objects.create()
 

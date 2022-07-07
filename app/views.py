@@ -138,7 +138,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 # creating comments using viewset
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    queryset = Comment.objects.select_related("session","student").all()
+    queryset = Comment.objects.select_related("session","user").all()
    
 
 
@@ -353,4 +353,12 @@ def like_announ_comment(request,announcomment_id):
         return Response({
             "message":"comment not found"
         })
+
+@api_view(['GET'])
+def get_session_comments(request,session_id):
+    session = Session.objects.get(id = session_id)
+    if session:
+        comments = Comment.objects.filter(session = session).all()
+        serializers = CommentSerializer(comments,many = True)
+        return Response(serializers.data)
 
