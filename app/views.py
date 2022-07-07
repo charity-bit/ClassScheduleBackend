@@ -184,6 +184,7 @@ class studentprofileupdateAPIview(generics.RetrieveAPIView, mixins.UpdateModelMi
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
+
     # uncomment permissions later
     # permission_classes = [TMPermissions]
     serializer_class = ModuleSerializer
@@ -202,6 +203,9 @@ class SessionViewSet(viewsets.ModelViewSet):
     queryset = Session.objects.select_related("module","technical_mentor")
 
 
+
+
+
   # get modules by a certain TM
 @api_view(['GET'])
 def get_tm_modules(request,tm_id):
@@ -218,14 +222,6 @@ def get_tm_modules(request,tm_id):
         return Response({"message":"The user is not a Technical_mentor"})
 
  
-
-
-
-  
-    permission_classes = [ModulePermissions]
-    serializer_class = CreateModuleSerializer
-    queryset = Module.objects.all()
-
 
 @api_view(["POST"])
 def add_student(request,module_id,student_id):
@@ -265,7 +261,7 @@ def get_student_modules(request,student_id):
         return Response(serializers.data)
 
     else:
-        return Response({"message":"The user is not a student"})
+        return Response({"message":"The user is not a student
 
 
 

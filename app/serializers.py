@@ -13,10 +13,13 @@ class UserSerializer(serializers.ModelSerializer):
 class ModuleSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
-
     class Meta:
         model = Module
         fields = "__all__"
+
+
+       
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -25,6 +28,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
+
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only = True)
@@ -41,6 +45,7 @@ class SessionSerializer(serializers.ModelSerializer):
     # session_comments = CommentSerializer(read_only = True)
     no_hours = serializers.IntegerField(read_only =True)
 
+
     class Meta:
         model = Session
         fields = "__all__"
@@ -49,7 +54,8 @@ class SessionSerializer(serializers.ModelSerializer):
 class AnnouncementSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
     technical_mentor_id = serializers.IntegerField(write_only = True)
-
+   
+    
     class Meta:
         model = Announcement
         fields = "__all__"
@@ -57,6 +63,15 @@ class AnnouncementSerializer(serializers.ModelSerializer):
    
 
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    # user = UserSerializer(read_only = True)
+    class Meta:
+        model = Comment
+        fields = ("id", "likes", "date_created", "comment", "session")
+        read_only_fields = ["user"]
+
+    # create_comment=Comment.objects.create()
 
 
 
