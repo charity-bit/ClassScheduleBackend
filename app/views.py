@@ -1,3 +1,4 @@
+import profile
 from django.http import HttpResponse, JsonResponse
 import re
 
@@ -185,3 +186,21 @@ class ModuleViewSet(viewsets.ModelViewSet):
     permission_classes = [ModulePermissions]
     serializer_class = CreateModuleSerializer
     queryset = Module.objects.all()
+
+
+@api_view(["POST"])
+def add_student(request,module_id,student_id):
+    user = User.objects.get(id = student_id)
+    if user.user_type == 'STUD':
+        profile = Profile.objects.get(user = user)
+        module = Module.objects.get(id = module_id)
+        if module in profile.modules.all():
+            return Response({"message":"This user is already inrolled in the module"})
+
+        else:
+            profile.modules.add(module)
+            return Response({"messsage":"module added successfully"})
+    else:
+        return Response({
+            "message":'This user is not a student'
+        })

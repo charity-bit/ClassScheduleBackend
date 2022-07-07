@@ -48,7 +48,10 @@ urlpatterns = [
    # Create user api
    path('api/user/create/',views.UserCreateAPIView.as_view(),name=''),
    path('api/user/login/',views.LoginAPIView.as_view(),name=''),
-   path('api/user/logout/',views.LogoutAPIView.as_view(),name='')
+   path('api/user/logout/',views.LogoutAPIView.as_view(),name=''),
+
+   # add student to module
+   path("api/module/<int:module_id>/student/<int:student_id>/",views.add_student,name="add-student"),
 
 
    
