@@ -1,7 +1,7 @@
 from django.urls import path
 
 from app import views
-from app.views import ModuleViewSet
+from app.views import ModuleViewSet, students, technical_mentors
 
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
@@ -56,6 +56,9 @@ urlpatterns = [
 
 
    path("api/module/<int:module_id>/sessions/",views.get_module_sessions,name='module-sessions'),
-   path("api/technical-mentor/<int:tm_id>/modules/",views.get_tm_modules,name='tm-modules')
+   path("api/technical-mentor/<int:tm_id>/modules/",views.get_tm_modules,name='tm-modules'),
+   path("api/technical-mentors/",views.technical_mentors,name=''),
+   path("api/students",views.students,name='')
+
 
 ] + router.urls
