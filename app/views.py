@@ -262,5 +262,34 @@ def get_student_modules(request,student_id):
         return Response({"message":"The user is not a student"})
 
 
+@api_view(['GET'])
+def technical_mentors(request):
+    technical_mentors = User.objects.filter(user_type = 'TM').all()
+    serializers = UserSerializer(technical_mentors,many=True)
+    return Response(serializers.data)
+
+@api_view(['GET'])
+def students(request):
+    students = User.objects.filter(user_type = 'STUD').all()
+    serializers = UserSerializer(students,many=True)
+    return Response(serializers.data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
