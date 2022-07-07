@@ -2,6 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.utils import timezone
+from datetime import datetime
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+
+from .managers import CustomUserManager
+
+from .managers import CustomUserManager
 
 from .managers import CustomUserManager
 
@@ -101,9 +108,17 @@ class Session(models.Model):
     )
     start = models.TimeField()
     end = models.TimeField()
+    no_hours = models.IntegerField()
 
-    def save_session(self):
-        self.save()
+
+    @property
+    def no_hours(self):
+        # datetime.timedelta(days=-1, seconds=86280)
+        diff = datetime.strptime(str(self.end),"%H:%M:%S") - datetime.strptime(str(self.start),"%H:%M:%S")
+        tsecs = diff.total_seconds()
+        thrs = int(tsecs/(60*60))
+        return thrs
+
 
     def delete_session(self):
         self.delete()
@@ -144,11 +159,13 @@ class Announcement(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    likes = models.ManyToManyField(User, related_name="likes")
+
+    likes = models.ManyToManyField(User,related_name='comment_likes',blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     comment = models.TextField()
     session = models.ForeignKey(
-        Session, on_delete=models.CASCADE, related_name="session"
+        Session, on_delete=models.CASCADE, related_name="session_comments"
+
     )
 
     def __str__(self):

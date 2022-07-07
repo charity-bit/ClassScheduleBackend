@@ -12,23 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ModuleSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
+    technical_mentor_id = serializers.IntegerField(write_only = True)
     class Meta:
         model = Module
         fields = "__all__"
 
-class CreateModuleSerializer(serializers.ModelSerializer):
-    technical_mentor = UserSerializer(read_only=True)
-
-    class Meta:
-        model = Module
-        fields = "__all__"
-
-    def create(self,validated_data):
-       
-        module = Module.objects.create(**validated_data)
-            # module.save()
-
-        return module
 
        
 
@@ -42,9 +30,21 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only = True)
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        
+    # create_comment=Comment.objects.create()
 class SessionSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    technical_mentor = UserSerializer(read_only=True)
+    technical_mentor_id = serializers.IntegerField(write_only = True)
     module = ModuleSerializer(read_only=True)
+    module_id = serializers.IntegerField(write_only = True)
+    # session_comments = CommentSerializer(read_only = True)
+    no_hours = serializers.IntegerField(read_only =True)
+
 
     class Meta:
         model = Session
@@ -52,8 +52,10 @@ class SessionSerializer(serializers.ModelSerializer):
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
+    technical_mentor = UserSerializer(read_only=True)
+    technical_mentor_id = serializers.IntegerField(write_only = True)
+   
+    
     class Meta:
         model = Announcement
         fields = "__all__"
@@ -70,6 +72,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ["user"]
 
     # create_comment=Comment.objects.create()
+
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

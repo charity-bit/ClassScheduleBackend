@@ -184,10 +184,44 @@ class studentprofileupdateAPIview(generics.RetrieveAPIView, mixins.UpdateModelMi
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
-    permission_classes = [ModulePermissions]
-    serializer_class = CreateModuleSerializer
+
+    # uncomment permissions later
+    # permission_classes = [TMPermissions]
+    serializer_class = ModuleSerializer
     queryset = Module.objects.all()
 
+   
+class AnnouncementViewSet(viewsets.ModelViewSet):
+    # permission_classes = [TMPermissions]
+    serializer_class = AnnouncementSerializer
+    queryset = Announcement.objects.all()
+
+
+class SessionViewSet(viewsets.ModelViewSet):
+    # permission_classes = [TMPermissions]
+    serializer_class = SessionSerializer
+    queryset = Session.objects.select_related("module","technical_mentor")
+
+
+
+
+
+  # get modules by a certain TM
+@api_view(['GET'])
+def get_tm_modules(request,tm_id):
+    user = User.objects.get(id = tm_id)
+    # fix check if there is a user
+    
+    if user.user_type == 'TM':
+        modules = Module.objects.filter(technical_mentor = user).all()
+        serializers = ModuleSerializer(modules,many=True)
+        return Response(serializers.data)
+            
+    else:
+        # if the user is not a tm
+        return Response({"message":"The user is not a Technical_mentor"})
+
+ 
 
 @api_view(["POST"])
 def add_student(request,module_id,student_id):
@@ -227,7 +261,7 @@ def get_student_modules(request,student_id):
         return Response(serializers.data)
 
     else:
-        return Response({"message":"The user is not a student"})
+        return Response({"message":"The user is not a student
 
 
 
