@@ -197,7 +197,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
 class SessionViewSet(viewsets.ModelViewSet):
     # permission_classes = [TMPermissions]
     serializer_class = SessionSerializer
-    queryset = Session.objects.select_related("module","technical_mentor").prefetch_related("session_comments").all()
+    queryset = Session.objects.select_related("module","technical_mentor")
 
 
 
