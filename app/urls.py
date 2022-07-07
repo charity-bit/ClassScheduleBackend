@@ -56,5 +56,6 @@ urlpatterns = [
 
 
    path("api/module/<int:module_id>/sessions/",views.get_module_sessions,name='module-sessions'),
+   path("api/technical-mentor/<int:tm_id>/modules/",views.get_tm_modules,name='tm-modules')
 
 ] + router.urls

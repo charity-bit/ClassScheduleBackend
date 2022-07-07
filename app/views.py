@@ -1,4 +1,3 @@
-import profile
 from django.http import HttpResponse, JsonResponse
 import re
 
@@ -10,14 +9,13 @@ from app.serializers import (
     UserCreateSerializer,
     UserSerializer,
     ModuleSerializer,
-    CreateModuleSerializer,
     ProfileSerializer,
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
 )
-from .permissions import ModulePermissions
+from .permissions import TMPermissions
 
 from rest_framework.response import Response
 from app.models import User, Module, Profile, Session, Announcement, Comment
@@ -261,7 +259,8 @@ def get_student_modules(request,student_id):
         return Response(serializers.data)
 
     else:
-        return Response({"message":"The user is not a student
+        return Response({"message":"The user is not a student"})
+
 
 
 
