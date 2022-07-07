@@ -1,10 +1,8 @@
 from rest_framework import permissions
 
-<<<<<<< HEAD
+
 class TMPermissions(permissions.BasePermission):
-=======
-class ModulePermissions(permissions.BasePermission):
->>>>>>> Development
+
     '''
     This determines whether a user is authorized to create modules,edit modules,delete modules
     '''

@@ -11,55 +11,50 @@ from drf_yasg import openapi
 
 
 schema_view = get_schema_view(
-    openapi.Info(
-        title="Schedule API",
-        default_version="v1",
-        description="Test description",
-        #   terms_of_service="https://www.google.com/policies/terms/",
-        #   contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
+   openapi.Info(
+      title="Schedule API",
+      default_version='v1',
+      description="Test description",
+    #   terms_of_service="https://www.google.com/policies/terms/",
+    #   contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
 )
 
 
 router = DefaultRouter()
 
-router.register(r"modules", ModuleViewSet)
+router.register(r'modules',ModuleViewSet)
 
 
 urlpatterns = [
-    path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
-    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
-    path("api/", views.api, name="api"),
-    # comments
-    path("api/comments/create/", views.create_comment, name=""),
-    path("api/comments/", views.all_comments, name=""),
-    # announcements
-    path("api/announcements/", views.all_announcements, name=""),
-    # sessions
-    path("api/sessions/detail/", views.get_session_details, name=""),
-    path("api/sessions/search/", views.get_available_session, name=""),
-    # Create user api
-    path("api/user/create/", views.UserCreateAPIView.as_view(), name=""),
-    path("api/user/login/", views.LoginAPIView.as_view(), name=""),
-    path("api/user/logout/", views.LogoutAPIView.as_view(), name=""),
-    # add student to module
-    path(
-        "api/module/<int:module_id>/student/<int:student_id>/",
-        views.add_student,
-        name="add-student",
-    ),
-    path(
-        "api/student/<int:student_id>/modules/",
-        views.get_student_modules,
-        name="student_modules",
-    ),
-    path(
-        "api/module/<int:module_id>/sessions/",
-        views.get_module_sessions,
-        name="module-sessions",
-    ),
-    path("api/technical-mentor/<int:tm_id>/modules/", views.get_tm_modules, name=""),
+   path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+   path('api/',views.api,name='api'),
+   
+   # comments
+   path('api/comments/create/', views.create_comment,name=''),
+   path('api/comments/', views.all_comments,name=''),
+
+   # announcements
+   path('api/announcements/', views.all_announcements,name=''),
+
+   # sessions
+   path('api/sessions/detail/', views.get_session_details,name=''),
+   path('api/sessions/search/', views.get_available_session,name=''),
+   
+   # Create user api
+   path('api/user/create/',views.UserCreateAPIView.as_view(),name=''),
+   path('api/user/login/',views.LoginAPIView.as_view(),name=''),
+   path('api/user/logout/',views.LogoutAPIView.as_view(),name=''),
+
+   # add student to module
+   path("api/module/<int:module_id>/student/<int:student_id>/",views.add_student,name="add-student"),
+   path("api/student/<int:student_id>/modules/",views.get_student_modules,name='student_modules'),
+
+
+   path("api/module/<int:module_id>/sessions/",views.get_module_sessions,name='module-sessions'),
+
 ] + router.urls
