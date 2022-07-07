@@ -99,6 +99,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    modules = ModuleSerializer(read_only=True)
+
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
    
     user = UserSerializer(read_only=True,many=False)
     class Meta:

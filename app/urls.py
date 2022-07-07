@@ -55,11 +55,13 @@ urlpatterns = [
    path('api/user/login/',views.LoginAPIView.as_view(),name=''),
    path('api/user/logout/',views.LogoutAPIView.as_view(),name=''),
 
+
       # Get profile
    path("api/student/profile" ,views.StudentProfileAPIview.as_view(),name="student_profile"),
     # update student profile
    path("api/student/<int:pk>/update/profile/", views.StudentProfileUpdateAPIview.as_view(), name="student_update_profile"),
     
+
 
 
    # add student to module

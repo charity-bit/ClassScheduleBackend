@@ -209,6 +209,7 @@ class StudentProfileUpdateAPIview(generics.GenericAPIView):
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
+
     # uncomment permissions later
     # permission_classes = [TMPermissions]
     serializer_class = ModuleSerializer
@@ -225,6 +226,7 @@ class SessionViewSet(viewsets.ModelViewSet):
     # permission_classes = [TMPermissions]
     serializer_class = SessionSerializer
     queryset = Session.objects.select_related("module","technical_mentor")
+
 
 
 
@@ -298,6 +300,7 @@ def students(request):
     serializers = UserSerializer(students,many=True)
     return Response(serializers.data)
 
+
 @api_view(["POST"])
 def like_comment(request,comment_id):
     user_id=request.data['user']
@@ -350,3 +353,4 @@ def like_announ_comment(request,announcomment_id):
         return Response({
             "message":"comment not found"
         })
+

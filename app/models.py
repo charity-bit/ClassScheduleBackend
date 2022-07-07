@@ -113,6 +113,7 @@ class Session(models.Model):
     no_hours = models.IntegerField()
 
 
+
     @property
     def no_hours(self):
         # datetime.timedelta(days=-1, seconds=86280)
@@ -120,6 +121,7 @@ class Session(models.Model):
         tsecs = diff.total_seconds()
         thrs = int(tsecs/(60*60))
         return thrs
+
 
     def delete_session(self):
         self.delete()
@@ -189,12 +191,14 @@ class AnnounComment(models.Model):
 
 
 class Comment(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    likes= models.ManyToManyField(User,related_name="likes",blank=True,null=True) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    likes = models.ManyToManyField(User,related_name='comment_likes',blank=True)
+
     date_created = models.DateTimeField(default=timezone.now)
     comment = models.TextField()
     session = models.ForeignKey(
         Session, on_delete=models.CASCADE, related_name="session_comments"
+
     )
    
 
