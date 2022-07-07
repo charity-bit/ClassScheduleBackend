@@ -1,14 +1,18 @@
 from rest_framework import serializers
-from .models import User, Profile, Comment, Module, Session, Announcement
+from .models import User, Profile, Comment, Module, Session, Announcement,AnnounComment
 from django.contrib.auth import authenticate
 import re
-
+from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
+    profile='ProfileSerializer(many=False,read_only=True)'
     class Meta:
         model = User
-        fields = "__all__"
-
+        # fields='__all__'
+        fields = ['pk','email','profile','name','user_type']
+        extra_kwargs={
+            "profile":{'read_only':True}
+        }
 
 class ModuleSerializer(serializers.ModelSerializer):
     technical_mentor = UserSerializer(read_only=True)
@@ -61,17 +65,36 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
    
-
+class AnnouncementCommentSerializer(serializers.ModelSerializer):
+    student = UserSerializer(read_only=True)
+    student_id = serializers.IntegerField(write_only = True)
+    announcement=AnnouncementSerializer(read_only = True)
+    announcement_id = serializers.IntegerField(write_only = True)
+    likes= UserSerializer(read_only = True,many=True)
+    
+    class Meta:
+        model=AnnounComment
+        fields='__all__'
+        
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only = True)
+    student = UserSerializer(read_only=True)
+    student_id = serializers.IntegerField(write_only = True)
+    session=SessionSerializer(read_only = True)
+    session_id = serializers.IntegerField(write_only = True)
+    # liked_by=UserSerializer(read_only = True)
+    liked_by = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=User.objects.all())
+
     class Meta:
-        model = Comment
-        fields = ("id", "likes", "date_created", "comment", "session")
-        read_only_fields = ["user"]
+        model=Comment
+        fields='__all__'
+        
 
     # create_comment=Comment.objects.create()
+
 
 
 
@@ -79,10 +102,32 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     modules = ModuleSerializer(read_only=True)
 
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+   
+    user = UserSerializer(read_only=True,many=False)
     class Meta:
         model = Profile
         fields = "__all__"
-        # read_only_fields=['user','modules']
+        extra_kwargs={
+            "modules":{"read_only":True}
+        }
+
+
+    def get_profile(self,instance,data):
+        instance.bio = data.get('bio', instance.bio)
+        instance = super().get_fields(instance, data)
+        return instance
+
+    def update(request, instance, validated_data):
+        instance.bio = validated_data['bio']
+
+        instance.save()
+        instance=super().update(instance,validated_data)
+        return instance
+
+
 
 
 class LoginSerializer(serializers.Serializer):
@@ -126,4 +171,39 @@ class UserCreateSerializer(serializers.ModelSerializer):
             return user
 
         serializers.ValidationError('Invalid Email')
-        
+
+
+# Changing the password
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+    old_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('old_password', 'password', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        return attrs
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError({"old_password": "Old password is not correct"})
+        return value
+
+            
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        if user.pk != instance.pk:
+            raise serializers.ValidationError({"authorize": "You dont have permission for this user."})
+
+        instance.set_password(validated_data['password'])
+        instance.save()
+
+        return instance

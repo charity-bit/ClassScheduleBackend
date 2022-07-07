@@ -40,6 +40,11 @@ urlpatterns = [
 
    # announcements
    path('api/announcements/', views.all_announcements,name=''),
+   
+   path("api/like/comment/<int:comment_id>/",views.like_comment,name="likes"),
+    # announcements comments likes
+   path("api/like/announcement/comment/<int:announcomment_id>/",views.like_announ_comment,name="announ-likes"),
+
 
    # sessions
    path('api/sessions/detail/', views.get_session_details,name=''),
@@ -49,6 +54,15 @@ urlpatterns = [
    path('api/user/create/',views.UserCreateAPIView.as_view(),name=''),
    path('api/user/login/',views.LoginAPIView.as_view(),name=''),
    path('api/user/logout/',views.LogoutAPIView.as_view(),name=''),
+
+
+      # Get profile
+   path("api/student/profile" ,views.StudentProfileAPIview.as_view(),name="student_profile"),
+    # update student profile
+   path("api/student/<int:pk>/update/profile/", views.StudentProfileUpdateAPIview.as_view(), name="student_update_profile"),
+    
+
+
 
    # add student to module
    path("api/module/<int:module_id>/student/<int:student_id>/",views.add_student,name="add-student"),

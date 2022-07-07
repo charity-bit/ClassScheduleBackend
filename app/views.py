@@ -1,6 +1,5 @@
 from django.http import HttpResponse, JsonResponse
 import re
-
 # from django.shortcuts import render
 from rest_framework.decorators import api_view
 from app import serializers
@@ -14,11 +13,14 @@ from app.serializers import (
     SessionSerializer,
     CommentSerializer,
     LoginSerializer,
+    AnnouncementCommentSerializer,
+    ChangePasswordSerializer,
+   
 )
 from .permissions import TMPermissions
 
 from rest_framework.response import Response
-from app.models import User, Module, Profile, Session, Announcement, Comment
+from app.models import User, Module, Profile, Session, Announcement, Comment,AnnounComment
 from rest_framework import status, generics
 from django.http import Http404
 
@@ -36,7 +38,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from drf_yasg.utils import swagger_auto_schema
-
+from django.db.models import Q 
 # from .permissions import *
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
@@ -65,11 +67,13 @@ class LoginAPIView(APIView):
                 "message": "User logged in successfully",
                 "email": user.email,
                 "user_type": user.user_type,
+                "user_id":user.id
             }
 
             # get auth token
             token, created = Token.objects.get_or_create(user=user)
             data["token"] = token.key
+            # data["User"]=user
 
             responseStatus = status.HTTP_200_OK
 
@@ -90,6 +94,7 @@ class UserCreateAPIView(APIView):
     @swagger_auto_schema(request_body=UserCreateSerializer)
     def post(self, request, format=None):
         data = request.data
+        print("data",data)
         email = data["email"]
 
         regex = "@([a-z\S]+)"
@@ -121,22 +126,28 @@ class LogoutAPIView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-# Adding comments
-@api_view(["POST"])
-def create_comment(request, format=None):
-    serializers = CommentSerializer(data=request.data)
-    if serializers.is_valid():
-        serializers.save()
-        return Response(serializers.data, status=status.HTTP_201_CREATED)
-    return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+class ChangePasswordView(generics.UpdateAPIView):
+
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ChangePasswordSerializer
 
 
-# getting all comments posted
-@api_view(["GET"])
-def all_comments(request, format=None):
-    comments = Comment.objects.all()
-    serializers = CommentSerializer(comments, many=True)
-    return Response(serializers.data)
+
+
+# creating comments using viewset
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.select_related("session","student").all()
+   
+
+
+
+class AnnouncementCommentViewSet(viewsets.ModelViewSet):
+    serializer_class = AnnouncementCommentSerializer
+    queryset = AnnounComment.objects.select_related("student","announcement").all()
+
+
 
 
 # Getting all announcements made by the TM
@@ -149,36 +160,52 @@ def all_announcements(request, format=None):
 
 # Getting the sessions and the details
 @api_view(["GET"])
-def get_session_details(request, format=None):
-    session_details = Session.objects.all()
-    serializers = SessionSerializer(session_details, many=True)
+def get_session_details(request,session_id):
+    session_details = Session.objects.filter(id=session_id).first()
+    serializers = SessionSerializer(session_details, many=False)
     return Response(serializers.data)
 
 
 # Getting the available sessions
 @api_view(["GET"])
-def get_available_session(request, session_id):
-    available_session = Session.objects.filter(id=session_id).first()
-    serializers = SessionSerializer(available_session, many=True)
-    return Response(serializers.data)
+def get_available_session(request, session_query):
+    available_sessions = Session.objects.filter(title__icontains=session_query)
+    serializer = SessionSerializer(available_sessions, many=True)
+    return Response(serializer.data)
 
 
-# Updating the student Profile
-class studentprofileupdateAPIview(generics.RetrieveAPIView, mixins.UpdateModelMixin):
+
+
+class StudentProfileAPIview(generics.GenericAPIView):
+    # lookup_field = 'user'
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def get(self, request, pk=None):
+        instance = self.get_object()
+        print("instance",instance)
+        instance.bio=request.data['bio']
+        instance.profile_image=request.data['image']
+        instance.get_fields=['bio','profile_image']
+        return Response('done')
+
+
+
+class StudentProfileUpdateAPIview(generics.GenericAPIView):
+    # lookup_field = 'user'
+    queryset = Profile.objects.all()
     serializer_class = UpdateProfileSerializer
-    parser_class = (
-        MultiPartParser,
-        FormParser,
-    )
 
-    def get_profile(self):
 
-        email = self.kwargs["email"]
-        new_obj = get_object_or_404(User, email=email)
-        return new_obj
+    def put(self, request, pk=None):
+        instance = self.get_object()
+        print("instance",instance)
+        instance.bio=request.data['bio']
+        instance.profile_image=request.data['image']
+        # instance.active = False
+        instance.save(update_fields=['bio','profile_image'])
+        return Response('done')
 
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
 
 
 class ModuleViewSet(viewsets.ModelViewSet):
@@ -199,7 +226,6 @@ class SessionViewSet(viewsets.ModelViewSet):
     # permission_classes = [TMPermissions]
     serializer_class = SessionSerializer
     queryset = Session.objects.select_related("module","technical_mentor")
-
 
 
 
@@ -275,21 +301,56 @@ def students(request):
     return Response(serializers.data)
 
 
+@api_view(["POST"])
+def like_comment(request,comment_id):
+    user_id=request.data['user']
+    user=User.objects.filter(pk=user_id).first()
+    comment=Comment.objects.filter(pk=comment_id).first()
+    if user is None:
+        return Response({
+            "message":"Authentication required"
+        })
+    
+    if comment is not None:
+        if user in comment.likes.all():
+            comment.likes.remove(user)
+            return Response({
+            "message":"like removed"
+        })
+        else:
+            comment.likes.add(user)
+            return Response({
+            "message":"like added"
+        })
+    else:
+        return Response({
+            "message":"comment not found"
+        })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
+@api_view(["POST"])
+def like_announ_comment(request,announcomment_id):
+    user_id=request.data['user']
+    user=User.objects.filter(pk=user_id).first()
+    announcomment=AnnounComment.objects.filter(pk=announcomment_id).first()
+    if user is None:
+        return Response({
+            "message":"Authentication required"
+        })
+    
+    if announcomment is not None:
+        if user in announcomment.likes.all():
+            announcomment.likes.remove(user)
+            return Response({
+            "message":"like removed"
+        })
+        else:
+            announcomment.likes.add(user)
+            return Response({
+            "message":"like added"
+        })
+    else:
+        return Response({
+            "message":"comment not found"
+        })
 
