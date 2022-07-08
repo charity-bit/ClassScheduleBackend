@@ -8,7 +8,6 @@ from app.serializers import (
     UserCreateSerializer,
     UserSerializer,
     ModuleSerializer,
-    ProfileSerializer,
     UpdateProfileSerializer,
     SessionSerializer,
     CommentSerializer,
@@ -38,7 +37,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from drf_yasg.utils import swagger_auto_schema
-from django.db.models import Q 
+
 # from .permissions import *
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
@@ -175,23 +174,31 @@ def get_available_session(request, session_query):
 
 
 
+@api_view(['GET'])
+def get_profile(request,user_id):
+    user = User.objects.get(id = user_id)
+    if user:
+        profile = Profile.objects.filter(user = user).first()
+        serializers = UpdateProfileSerializer(profile)
+        return Response(serializers.data)
 
-class StudentProfileAPIview(generics.GenericAPIView):
-    # lookup_field = 'user'
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+# class ProfileAPIview(generics.GenericAPIView):
+#     # lookup_field = 'user'
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer
 
-    def get(self, request, pk=None):
-        instance = self.get_object()
-        print("instance",instance)
-        instance.bio=request.data['bio']
-        instance.profile_image=request.data['image']
-        instance.get_fields=['bio','profile_image']
-        return Response('done')
+#     def get(self, request, pk=None):
+#         instance = self.get_object()
+#         print("instance",instance)
+#         # instance.bio=request.data['bio']
+#         # instance.profile_image=request.data['profile_image']
+#         # instance.get_fields=['bio','profile_image']
+#         serializer = ProfileSerializer(instance)
+#         return Response(serializer.data)
 
 
 
-class StudentProfileUpdateAPIview(generics.GenericAPIView):
+class ProfileUpdateAPIview(generics.GenericAPIView):
     # lookup_field = 'user'
     queryset = Profile.objects.all()
     serializer_class = UpdateProfileSerializer
@@ -201,7 +208,7 @@ class StudentProfileUpdateAPIview(generics.GenericAPIView):
         instance = self.get_object()
         print("instance",instance)
         instance.bio=request.data['bio']
-        instance.profile_image=request.data['image']
+        instance.profile_image=request.data['profile_image']
         # instance.active = False
         instance.save(update_fields=['bio','profile_image'])
         return Response('done')

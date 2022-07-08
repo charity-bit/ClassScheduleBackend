@@ -23,16 +23,7 @@ class ModuleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-       
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    modules = ModuleSerializer(read_only=True)
-
-    class Meta:
-        model = Profile
-        fields = "__all__"
+    
 
 
 class SessionSerializer(serializers.ModelSerializer):
@@ -90,11 +81,6 @@ class AnnouncementCommentSerializer(serializers.ModelSerializer):
 
 
 
-class UpdateProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    modules = ModuleSerializer(read_only=True)
-
-
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
    
@@ -106,18 +92,6 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             "modules":{"read_only":True}
         }
 
-
-    def get_profile(self,instance,data):
-        instance.bio = data.get('bio', instance.bio)
-        instance = super().get_fields(instance, data)
-        return instance
-
-    def update(request, instance, validated_data):
-        instance.bio = validated_data['bio']
-
-        instance.save()
-        instance=super().update(instance,validated_data)
-        return instance
 
 
 

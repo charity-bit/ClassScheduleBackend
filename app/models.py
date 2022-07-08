@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
@@ -74,10 +75,11 @@ class Module(models.Model):
 
         return module
 
+    profile_image = CloudinaryField("profile_image")
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_image = CloudinaryField("image")
+    profile_image = CloudinaryField("profile_image")
     modules = models.ManyToManyField(Module, blank=True)
     bio = models.TextField()
     

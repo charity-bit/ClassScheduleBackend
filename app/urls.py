@@ -57,16 +57,16 @@ urlpatterns = [
 
 
       # Get profile
-   path("api/student/profile" ,views.StudentProfileAPIview.as_view(),name="student_profile"),
+   path("api/user/<int:user_id>/profile/" ,views.get_profile,name="user-profile"),
     # update student profile
-   path("api/student/<int:pk>/update/profile/", views.StudentProfileUpdateAPIview.as_view(), name="student_update_profile"),
+   path("api/user/<int:pk>/update/profile/", views.ProfileUpdateAPIview.as_view(), name="update-profile"),
     
 
 
 
    # add student to module
    path("api/module/<int:module_id>/student/<int:student_id>/",views.add_student,name="add-student"),
-   path("api/student/<int:student_id>/modules/",views.get_student_modules,name='student_modules'),
+   path("api/student/<int:student_id>/modules/",views.get_student_modules,name='student-modules'),
 
 
    path("api/module/<int:module_id>/sessions/",views.get_module_sessions,name='module-sessions'),
